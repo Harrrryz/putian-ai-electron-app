@@ -3,6 +3,8 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
+    "web": "npm run dev --workspace @app/renderer",
+    "web:build": "npm run build --workspace @app/renderer",
     "typecheck": "tsc --noEmit"
   },
   "exports": {

@@ -1,14 +1,10 @@
 {
-  "name": "root",
+  "name": "putian-ai-electron-app",
   "description": "Secure boilerplate for Electron app based on Vite",
   "version": "3.1.0",
   "private": true,
   "type": "module",
-  "author": {
-    "email": "kozackunisoft@gmail.com",
-    "name": "Alex Kozack",
-    "url": "https://kozack.me"
-  },
+  "author": "Harrrrz",
   "main": "packages/entry-point.mjs",
   "workspaces": [
     "packages/*"
@@ -38,5 +34,22 @@
   },
   "dependencies": {
     "@app/main": "*"
-  }
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Harrrryz/putian-ai-electron-app.git"
+  },
+  "keywords": [
+    "AI",
+    "TODO",
+    "Calendar"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Harrrryz/putian-ai-electron-app/issues"
+  },
+  "homepage": "https://github.com/Harrrryz/putian-ai-electron-app#readme"
 }
