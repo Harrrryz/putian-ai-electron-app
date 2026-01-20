@@ -19,6 +19,7 @@
 - `npm run build`：构建所有工作区（若存在 `build` 脚本）。
 - `npm run typecheck`：对所有工作区进行类型检查。
 - `npm run compile`：构建并使用 `electron-builder` 产出可执行包。
+- `npm run openapi`：从 `http://127.0.0.1:8089/schema/openapi.json` 生成前端 API 客户端代码（输出到 `packages/renderer/src/api/generated/`）。
 - `npm run test`：运行 Playwright E2E 测试。
 - `npm run lint --workspace @app/renderer`：仅渲染层 ESLint 检查。
 - `npm run dev --workspace @app/renderer`：单独启动渲染层开发服务。
@@ -37,6 +38,8 @@
 - 渲染层通过 `@app/preload` 暴露能力，避免直接调用 Node/Electron API。
 - IPC 或窗口控制逻辑放在 `packages/main`，`preload` 只做最小桥接。
 - 新增环境变量请同步更新 `types/env.d.ts` 以获得类型提示。
+- OpenAPI 客户端生成配置位于 `openapi-ts.config.ts`，生成产物位于 `packages/renderer/src/api/generated/`，请勿手改。
+- 运行时配置通过 `packages/renderer/src/api/client-config.ts` 注入 `baseUrl`。
 
 ## 测试指南
 - 使用 Playwright 进行端到端测试；文件命名遵循 `*.spec.ts`。
@@ -52,5 +55,6 @@
 
 ## 配置与安全提示
 - 环境变量通过 `import.meta.env` 读取，仅 `VITE_` 前缀会暴露给渲染层。
+- 可通过 `VITE_API_BASE_URL` 覆盖后端地址，示例见 `.env.example`。
 - Node 版本要求：`>=23.0.0`（见 `package.json`）。
 - 需要访问系统/Node 能力时，优先放在 `preload` 或 `main`，通过安全桥接暴露给渲染层。
