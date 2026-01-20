@@ -34,6 +34,15 @@
 - 仓库未强制全局格式化/风格工具；新增代码遵循就近模块的既有风格即可。
 - 依赖保持精简，避免无充分理由引入新的第三方库（参见 `CONTRIBUTING.md`）。
 
+## UI 开发配置
+- 渲染层使用 Tailwind CSS v4（CSS-first），主样式入口：`packages/renderer/src/index.css`。
+- HeroUI 插件入口：`packages/renderer/hero.ts`，在 `index.css` 中通过 `@plugin '../hero.ts';` 引入。
+- HeroUI 样式扫描路径通过 `@source` 指向 `node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}`。
+- PostCSS 配置位于 `packages/renderer/postcss.config.js`，使用 `@tailwindcss/postcss`。
+- Vite 配置位于 `packages/renderer/vite.config.ts`，已启用 `@tailwindcss/vite` 插件。
+- 入口 Provider 在 `packages/renderer/src/main.tsx` 使用 `HeroUIProvider` 包裹应用根节点。
+- 可通过 web search 来搜索 heroui 的组件和用法示例。
+
 ## 架构与边界
 - 渲染层通过 `@app/preload` 暴露能力，避免直接调用 Node/Electron API。
 - IPC 或窗口控制逻辑放在 `packages/main`，`preload` 只做最小桥接。

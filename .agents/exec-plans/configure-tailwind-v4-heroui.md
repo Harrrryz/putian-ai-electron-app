@@ -15,12 +15,14 @@
 - [x] (2026-01-12 08:30Z) 新增 HeroUI Tailwind 插件入口文件并更新全局 CSS。
 - [x] (2026-01-12 08:32Z) 更新 Vite 与 PostCSS 配置以启用 Tailwind v4。
 - [x] (2026-01-12 08:35Z) 在渲染层入口挂载 HeroUIProvider 并替换示例 UI。
-- [ ] (2026-01-12 08:35Z) 验证本地开发构建与 UI 渲染效果。
+- [x] (2026-01-12 08:40Z) 验证本地开发构建与 UI 渲染效果（Vite dev server 正常启动）。
 
 ## Surprises & Discoveries (惊喜与发现)
 
 - 观察：HeroUI 的 Tailwind v4 方案基于 CSS-first 模式，需要在主 CSS 中使用 `@plugin`、`@source` 与 `@custom-variant`。
   证据：HeroUI 官方文档的 Tailwind v4 与安装说明。
+- 观察：本地 5173 端口被占用，Vite 自动切换至 5174。
+  证据：运行 `npm run dev --workspace @app/renderer` 的控制台输出。
 
 ## Decision Log (决策日志)
 
@@ -33,7 +35,9 @@
 
 ## Outcomes & Retrospective (结果与回顾)
 
-- 待完成：验证完成后补充实际效果、残留问题与后续优化建议。
+- 结果：渲染层已启用 Tailwind v4 与 HeroUI，Vite dev server 可启动并提供本地访问地址。
+- 差距：尚未在浏览器确认组件渲染效果（需人工打开本地地址）。
+- 教训：在自动化验证时需要注意端口冲突，必要时使用 `--host` 或指定端口参数。
 
 ## Context and Orientation (背景与导向)
 
@@ -69,7 +73,7 @@
 
 ## Validation and Acceptance (验证与验收)
 
-在仓库根目录执行 `npm run dev --workspace @app/renderer`。打开终端输出的本地地址，页面应渲染 HeroUI 组件并带有 Tailwind 基础样式。若 Tailwind 与 HeroUI 未生效，优先检查 `@plugin` 与 `@source` 路径是否正确。
+在仓库根目录执行 `npm run dev --workspace @app/renderer`。打开终端输出的本地地址（当前为 `http://localhost:5174/`），页面应渲染 HeroUI 组件并带有 Tailwind 基础样式。若 Tailwind 与 HeroUI 未生效，优先检查 `@plugin` 与 `@source` 路径是否正确。
 
 ## Idempotence and Recovery (幂等性与恢复)
 
@@ -106,4 +110,4 @@
 - 渲染层入口 `packages/renderer/src/main.tsx` 需要使用 `HeroUIProvider` 包裹应用根节点。
   
 ---
-变更记录：更新进度条目以反映依赖安装与配置修改已完成，保留验证步骤待执行。
+变更记录：补充验证结果、端口冲突观察以及 Outcome 总结。
