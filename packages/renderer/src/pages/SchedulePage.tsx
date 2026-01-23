@@ -114,17 +114,17 @@ const SchedulePage = () => {
       ) : (
         <div className="space-y-4">
           {sortedGroups.map(([day, items]) => (
-            <Card key={day} className="app-surface rounded-3xl">
+            <Card key={day} className="app-surface app-card rounded-3xl">
               <CardHeader>
                 <p className="text-lg font-semibold text-[var(--ink-strong)]">
                   {day}
                 </p>
               </CardHeader>
-              <CardBody className="space-y-3">
+              <CardBody className="app-card-body space-y-3">
                 {items.map((todo) => (
                   <div
                     key={todo.id}
-                    className="rounded-2xl border border-[var(--surface-border)] bg-white/70 px-4 py-3"
+                    className="rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-muted)] px-4 py-3"
                   >
                     <p className="font-medium text-[var(--ink-strong)]">
                       {todo.item}

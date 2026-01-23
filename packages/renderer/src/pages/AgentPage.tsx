@@ -186,11 +186,11 @@ const AgentPage = () => {
       ])
     }
 
-    const stream = api.agentCreateStream(
+    const stream = await api.agentCreateStream(
       {
         messages: [{ role: 'user', content }],
-        session_id: activeSession,
-        agent_name: 'TodoAssistant',
+        sessionid: activeSession,
+        agentname: 'TodoAssistant',
       },
       {
         signal: controller.signal,
@@ -330,7 +330,7 @@ const AgentPage = () => {
       ) : null}
 
       <div className="grid gap-4 lg:grid-cols-[260px_1fr]">
-        <Card className="app-surface rounded-3xl">
+        <Card className="app-surface app-card rounded-3xl">
           <CardHeader className="flex items-center justify-between">
             <p className="text-sm font-semibold text-[var(--ink-strong)]">
               会话列表
@@ -339,7 +339,7 @@ const AgentPage = () => {
               {sessions.length}
             </Chip>
           </CardHeader>
-          <CardBody className="space-y-2">
+          <CardBody className="app-card-body space-y-2">
             {sessions.length ? (
               sessions.map((session) => (
                 <button
@@ -347,7 +347,7 @@ const AgentPage = () => {
                   className={`w-full rounded-2xl px-3 py-2 text-left text-sm transition ${
                     session === activeSession
                       ? 'bg-[var(--accent-soft)] text-[var(--ink-strong)]'
-                      : 'hover:bg-white/60'
+                      : 'hover:bg-[var(--surface-muted)]'
                   }`}
                   onClick={() => {
                     setActiveSession(session)
@@ -364,7 +364,7 @@ const AgentPage = () => {
         </Card>
 
         <div className="space-y-4">
-          <Card className="app-surface rounded-3xl">
+          <Card className="app-surface app-card rounded-3xl">
             <CardHeader className="flex items-center justify-between">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-soft)]">
@@ -381,7 +381,7 @@ const AgentPage = () => {
                 </div>
               ) : null}
             </CardHeader>
-            <CardBody className="space-y-3">
+            <CardBody className="app-card-body space-y-3">
               {messages.length ? (
                 messages.map((message) => (
                   <div
@@ -389,7 +389,7 @@ const AgentPage = () => {
                     className={`rounded-2xl px-4 py-3 text-sm ${
                       message.role === 'user'
                         ? 'ml-auto bg-[var(--accent)] text-white'
-                        : 'bg-white/70 text-[var(--ink-strong)]'
+                        : 'bg-[var(--surface-muted)] text-[var(--ink-strong)]'
                     }`}
                   >
                     <p className="text-xs uppercase tracking-[0.2em] opacity-70">
@@ -410,8 +410,8 @@ const AgentPage = () => {
             </CardBody>
           </Card>
 
-          <Card className="app-surface rounded-3xl">
-            <CardBody className="space-y-3">
+          <Card className="app-surface app-card rounded-3xl">
+            <CardBody className="app-card-body space-y-3">
               <Input
                 label="发送消息"
                 placeholder="输入你的需求..."
@@ -441,7 +441,7 @@ const AgentPage = () => {
 
       <Divider />
 
-      <Card className="app-surface rounded-3xl">
+      <Card className="app-surface app-card rounded-3xl">
         <CardHeader>
           <p className="text-sm text-[var(--ink-soft)]">
             小提示：AI 助手默认使用 TodoAssistant，可自动创建 Todo 并识别时间。

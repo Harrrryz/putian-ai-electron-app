@@ -4,7 +4,7 @@
   "version": "3.1.0",
   "private": true,
   "type": "module",
-  "author": "Harrrrz",
+  "author": "Harrrrz <dev@local.test>",
   "main": "packages/entry-point.mjs",
   "workspaces": [
     "packages/*"
@@ -36,9 +36,6 @@
   },
   "dependencies": {
     "@app/main": "*"
-  },
-  "directories": {
-    "test": "tests"
   },
   "repository": {
     "type": "git",

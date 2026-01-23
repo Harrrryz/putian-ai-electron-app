@@ -246,7 +246,7 @@ const TodosPage = () => {
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
           {filteredTodos.map((todo) => (
-            <Card key={todo.id} className="app-surface rounded-3xl">
+            <Card key={todo.id} className="app-surface app-card rounded-3xl">
               <CardHeader className="flex items-start justify-between gap-3">
                 <div>
                   <p className="text-lg font-semibold text-[var(--ink-strong)]">
@@ -261,7 +261,7 @@ const TodosPage = () => {
                   {todo.importance}
                 </Chip>
               </CardHeader>
-              <CardBody className="space-y-3">
+              <CardBody className="app-card-body space-y-3">
                 <p className="text-sm text-[var(--ink-soft)]">
                   {todo.description || '暂无描述'}
                 </p>
@@ -297,13 +297,13 @@ const TodosPage = () => {
       <Divider className="my-4" />
 
       <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-        <Card className="app-surface rounded-3xl">
+        <Card className="app-surface app-card rounded-3xl">
           <CardHeader>
             <p className="text-lg font-semibold text-[var(--ink-strong)]">
               标签管理
             </p>
           </CardHeader>
-          <CardBody className="space-y-4">
+          <CardBody className="app-card-body space-y-4">
             <div className="flex flex-wrap gap-2">
               {tags.length ? (
                 tags.map((tag) => (
@@ -397,7 +397,7 @@ const TodosPage = () => {
                       重要程度
                     </label>
                     <select
-                      className="mt-2 w-full rounded-xl border border-[var(--surface-border)] bg-white/80 px-3 py-2 text-sm"
+                      className="mt-2 w-full rounded-xl border border-[var(--surface-border)] bg-[var(--surface-muted)] px-3 py-2 text-sm"
                       value={formState.importance}
                       onChange={(event) =>
                         setFormState((prev) => ({

@@ -91,34 +91,34 @@ const DashboardPage = () => {
         description="掌握你的任务节奏与 AI 使用情况。"
       />
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="app-surface rounded-3xl">
+        <Card className="app-surface app-card rounded-3xl">
           <CardHeader className="text-xs uppercase tracking-[0.2em] text-[var(--ink-soft)]">
             任务总数
           </CardHeader>
-          <CardBody className="text-3xl font-semibold text-[var(--ink-strong)]">
+          <CardBody className="app-card-body text-3xl font-semibold text-[var(--ink-strong)]">
             {stats.total}
           </CardBody>
         </Card>
-        <Card className="app-surface rounded-3xl">
+        <Card className="app-surface app-card rounded-3xl">
           <CardHeader className="text-xs uppercase tracking-[0.2em] text-[var(--ink-soft)]">
             未来 7 天
           </CardHeader>
-          <CardBody className="text-3xl font-semibold text-[var(--ink-strong)]">
+          <CardBody className="app-card-body text-3xl font-semibold text-[var(--ink-strong)]">
             {stats.upcoming}
           </CardBody>
         </Card>
-        <Card className="app-surface rounded-3xl">
+        <Card className="app-surface app-card rounded-3xl">
           <CardHeader className="text-xs uppercase tracking-[0.2em] text-[var(--ink-soft)]">
             高优先级
           </CardHeader>
-          <CardBody className="text-3xl font-semibold text-[var(--ink-strong)]">
+          <CardBody className="app-card-body text-3xl font-semibold text-[var(--ink-strong)]">
             {stats.high}
           </CardBody>
         </Card>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-        <Card className="app-surface rounded-3xl">
+        <Card className="app-surface app-card rounded-3xl">
           <CardHeader className="flex items-center justify-between">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-soft)]">
@@ -129,12 +129,12 @@ const DashboardPage = () => {
               </p>
             </div>
           </CardHeader>
-          <CardBody className="space-y-3">
+          <CardBody className="app-card-body space-y-3">
             {upcomingTodos.length ? (
               upcomingTodos.map((todo) => (
                 <div
                   key={todo.id}
-                  className="rounded-2xl border border-[var(--surface-border)] bg-white/70 px-4 py-3"
+                  className="rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-muted)] px-4 py-3"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <p className="font-medium text-[var(--ink-strong)]">
@@ -157,7 +157,7 @@ const DashboardPage = () => {
           </CardBody>
         </Card>
 
-        <Card className="app-surface rounded-3xl">
+        <Card className="app-surface app-card rounded-3xl">
           <CardHeader className="flex flex-col items-start gap-1">
             <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-soft)]">
               AI 用量
@@ -166,7 +166,7 @@ const DashboardPage = () => {
               本月使用情况
             </p>
           </CardHeader>
-          <CardBody className="space-y-3 text-sm text-[var(--ink-soft)]">
+          <CardBody className="app-card-body space-y-3 text-sm text-[var(--ink-soft)]">
             {usage ? (
               <>
                 <div className="flex items-center justify-between">

@@ -21,13 +21,13 @@ const SettingsPage = ({ user, onLogout }: SettingsPageProps) => {
       <PageHeader title="设置" description="账户、环境与系统信息。" />
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card className="app-surface rounded-3xl">
+        <Card className="app-surface app-card rounded-3xl">
           <CardHeader>
             <p className="text-lg font-semibold text-[var(--ink-strong)]">
               账户信息
             </p>
           </CardHeader>
-          <CardBody className="space-y-2 text-sm text-[var(--ink-soft)]">
+          <CardBody className="app-card-body space-y-2 text-sm text-[var(--ink-soft)]">
             <p>
               <span className="font-semibold text-[var(--ink-strong)]">邮箱：</span>
               {user.email}
@@ -46,13 +46,13 @@ const SettingsPage = ({ user, onLogout }: SettingsPageProps) => {
           </CardBody>
         </Card>
 
-        <Card className="app-surface rounded-3xl">
+        <Card className="app-surface app-card rounded-3xl">
           <CardHeader>
             <p className="text-lg font-semibold text-[var(--ink-strong)]">
               连接配置
             </p>
           </CardHeader>
-          <CardBody className="space-y-2 text-sm text-[var(--ink-soft)]">
+          <CardBody className="app-card-body space-y-2 text-sm text-[var(--ink-soft)]">
             <p>
               <span className="font-semibold text-[var(--ink-strong)]">API：</span>
               {BASE_URL}

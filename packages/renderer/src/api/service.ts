@@ -19,11 +19,26 @@ import {
 } from './generated/sdk.gen'
 import type {
   AccountLogin,
+  AccountProfileResponse,
   AccountRegister,
+  AgentCreateTodoResponse,
   AgentTodoRequest,
+  CreateNewSessionResponse,
+  CreateTagResponse,
+  CreateTodoResponse,
+  DeleteTagResponse,
+  DeleteTodoResponse,
+  GetSessionHistoryResponse,
+  GetUsageStatsResponse,
   Importance,
+  ListAgentSessionsResponse,
+  ListTagsResponse,
+  ListTodosResponse,
+  OAuth2Login,
+  ResendVerificationResponse,
   TagCreate,
   TodoCreate,
+  UpdateTodoResponse,
   User,
 } from './generated/types.gen'
 import { client } from './generated/client.gen'
@@ -82,15 +97,22 @@ const toResult = async <T>(
 
 export const api = {
   login: (payload: AccountLogin) =>
-    toResult(accountLogin({ body: payload, responseStyle: 'fields' })),
+    toResult<OAuth2Login>(
+      accountLogin({ body: payload, responseStyle: 'fields' }),
+    ),
   logout: () => toResult(accountLogout({ responseStyle: 'fields' })),
-  profile: () => toResult<User>(accountProfile({ responseStyle: 'fields' })),
+  profile: () =>
+    toResult<AccountProfileResponse>(
+      accountProfile({ responseStyle: 'fields' }),
+    ),
   register: (payload: AccountRegister) =>
-    toResult<User>(accountRegister({ body: payload, responseStyle: 'fields' })),
+    toResult<User>(
+      accountRegister({ body: payload, responseStyle: 'fields' }),
+    ),
   resendVerification: (email: string) =>
-    toResult(
+    toResult<ResendVerificationResponse>(
       resendVerification({
-        body: { email },
+        query: { email },
         responseStyle: 'fields',
       }),
     ),
@@ -102,16 +124,18 @@ export const api = {
     end_time_from?: string
     end_time_to?: string
   }) =>
-    toResult(
+    toResult<ListTodosResponse>(
       listTodos({
         query,
         responseStyle: 'fields',
       }),
     ),
   createTodo: (payload: TodoCreate) =>
-    toResult(createTodo({ body: payload, responseStyle: 'fields' })),
+    toResult<CreateTodoResponse>(
+      createTodo({ body: payload, responseStyle: 'fields' }),
+    ),
   updateTodo: (todoId: string, payload: TodoCreate) =>
-    toResult(
+    toResult<UpdateTodoResponse>(
       updateTodo({
         path: { todo_id: todoId },
         body: payload,
@@ -119,24 +143,29 @@ export const api = {
       }),
     ),
   deleteTodo: (todoId: string) =>
-    toResult(
+    toResult<DeleteTodoResponse>(
       deleteTodo({
         path: { todo_id: todoId },
         responseStyle: 'fields',
       }),
     ),
-  listTags: () => toResult(listTags({ responseStyle: 'fields' })),
+  listTags: () =>
+    toResult<ListTagsResponse>(listTags({ responseStyle: 'fields' })),
   createTag: (payload: TagCreate) =>
-    toResult(createTag({ body: payload, responseStyle: 'fields' })),
+    toResult<CreateTagResponse>(
+      createTag({ body: payload, responseStyle: 'fields' }),
+    ),
   deleteTag: (tagId: string) =>
-    toResult(
+    toResult<DeleteTagResponse>(
       deleteTag({
         path: { tag_id: tagId },
         responseStyle: 'fields',
       }),
     ),
   agentCreate: (payload: AgentTodoRequest) =>
-    toResult(agentCreateTodo({ body: payload, responseStyle: 'fields' })),
+    toResult<AgentCreateTodoResponse>(
+      agentCreateTodo({ body: payload, responseStyle: 'fields' }),
+    ),
   agentCreateStream: (
     payload: AgentTodoRequest,
     options?: {
@@ -155,18 +184,25 @@ export const api = {
       signal: options?.signal,
     }),
   listAgentSessions: () =>
-    toResult(listAgentSessions({ responseStyle: 'fields' })),
+    toResult<ListAgentSessionsResponse>(
+      listAgentSessions({ responseStyle: 'fields' }),
+    ),
   createAgentSession: () =>
-    toResult(createNewSession({ responseStyle: 'fields' })),
+    toResult<CreateNewSessionResponse>(
+      createNewSession({ responseStyle: 'fields' }),
+    ),
   getSessionHistory: (sessionId: string, limit = 20) =>
-    toResult(
+    toResult<GetSessionHistoryResponse>(
       getSessionHistory({
         path: { session_id: sessionId },
         query: { limit },
         responseStyle: 'fields',
       }),
     ),
-  getUsageStats: () => toResult(getUsageStats({ responseStyle: 'fields' })),
+  getUsageStats: () =>
+    toResult<GetUsageStatsResponse>(
+      getUsageStats({ responseStyle: 'fields' }),
+    ),
 }
 
 export const importanceOptions: Array<{ label: string; value: Importance }> = [

@@ -16,6 +16,7 @@ import DashboardPage from './pages/DashboardPage'
 import SchedulePage from './pages/SchedulePage'
 import SettingsPage from './pages/SettingsPage'
 import TodosPage from './pages/TodosPage'
+import ThemeToggle from './components/ThemeToggle'
 
 type PageKey = 'dashboard' | 'todos' | 'schedule' | 'agent' | 'settings'
 
@@ -96,15 +97,18 @@ const App = () => {
 
   return (
     <div className="min-h-full">
-      <div className="mx-auto flex min-h-full max-w-6xl flex-col gap-6 px-4 py-6 lg:flex-row">
+      <div className="mx-auto grid min-h-full max-w-6xl items-start gap-6 px-4 py-6 lg:grid-cols-[260px_1fr]">
         <aside className="app-surface flex shrink-0 flex-col gap-4 rounded-[32px] p-5 lg:w-64">
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-soft)]">
               Todo AI
             </p>
-            <p className="app-title text-2xl font-semibold text-[var(--ink-strong)]">
-              工作台
-            </p>
+            <div className="mt-2 flex items-center justify-between gap-3">
+              <p className="app-title text-2xl font-semibold text-[var(--ink-strong)]">
+                工作台
+              </p>
+              <ThemeToggle />
+            </div>
           </div>
           <Divider />
           <div className="flex flex-wrap gap-2 lg:flex-col">
@@ -129,8 +133,8 @@ const App = () => {
           </div>
         </aside>
 
-        <main className="flex-1 space-y-6">
-          <Card className="app-surface rounded-[32px]">
+        <main className="flex min-h-0 flex-1 flex-col gap-6">
+          <Card className="app-surface app-card rounded-[32px]">
             <CardHeader className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-soft)]">
@@ -152,7 +156,7 @@ const App = () => {
                 />
               ) : null}
             </CardHeader>
-            <CardBody>{currentPage}</CardBody>
+            <CardBody className="app-card-body">{currentPage}</CardBody>
           </Card>
         </main>
       </div>

@@ -40,6 +40,22 @@ body {
   --shadow-lg: 0 18px 42px rgba(47, 48, 44, 0.12);
 }
 
+.dark {
+  --app-bg: #0f1113;
+  --app-ink: #efece6;
+  --ink-strong: #f7f4ee;
+  --ink-soft: #a7a39a;
+  --surface: #171a1d;
+  --surface-muted: #121417;
+  --surface-border: rgba(247, 244, 238, 0.12);
+  --accent: #71c59c;
+  --accent-soft: rgba(113, 197, 156, 0.18);
+  --accent-warm: #ff8a6b;
+  --accent-cool: #6bb2db;
+  --shadow-sm: 0 8px 18px rgba(7, 9, 12, 0.45);
+  --shadow-lg: 0 18px 42px rgba(7, 9, 12, 0.6);
+}
+
 body::before {
   content: '';
   position: fixed;
@@ -50,6 +66,13 @@ body::before {
     radial-gradient(circle at 20% 80%, rgba(45, 106, 79, 0.2), transparent 60%);
   pointer-events: none;
   z-index: -1;
+}
+
+.dark body::before {
+  background:
+    radial-gradient(circle at 15% 20%, rgba(108, 178, 219, 0.2), transparent 60%),
+    radial-gradient(circle at 80% 10%, rgba(255, 138, 107, 0.18), transparent 55%),
+    radial-gradient(circle at 20% 80%, rgba(113, 197, 156, 0.22), transparent 65%);
 }
 
 .app-surface {
@@ -65,6 +88,19 @@ body::before {
 
 .app-title {
   font-family: var(--font-display);
+}
+
+.app-card {
+  display: flex;
+  flex-direction: column;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+.app-card-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
 }
 
 .fade-up {

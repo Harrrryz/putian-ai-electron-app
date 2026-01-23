@@ -86,7 +86,7 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
 
   return (
     <div className="flex min-h-full items-center justify-center px-4 py-10">
-      <Card className="app-surface w-full max-w-xl rounded-[32px]">
+      <Card className="app-surface app-card w-full max-w-xl rounded-[32px]">
         <CardHeader className="flex flex-col items-start gap-2">
           <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-soft)]">
             Todo AI Desktop
@@ -98,7 +98,7 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
             模块化 Todo 管理 + AI 助手，专为日程规划而生。
           </p>
         </CardHeader>
-        <CardBody className="space-y-4">
+        <CardBody className="app-card-body space-y-4">
           <Tabs
             selectedKey={activeTab}
             onSelectionChange={(key) => setActiveTab(String(key))}
