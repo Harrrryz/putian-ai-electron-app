@@ -35,6 +35,7 @@
 - 依赖保持精简，避免无充分理由引入新的第三方库（参见 `CONTRIBUTING.md`）。
 
 ## UI 开发配置
+- UI 框架使用 HeroUI（基于 Tailwind CSS v4） 及 tailwindcss 开发。
 - 渲染层使用 Tailwind CSS v4（CSS-first），主样式入口：`packages/renderer/src/index.css`。
 - HeroUI 插件入口：`packages/renderer/hero.ts`，在 `index.css` 中通过 `@plugin '../hero.ts';` 引入。
 - HeroUI 样式扫描路径通过 `@source` 指向 `node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}`。
