@@ -15,10 +15,16 @@
   "scripts": {
     "build": "npm run build -ws --if-present",
     "compile": "npm run build && electron-builder build --config electron-builder.mjs",
+    "package": "npm run compile",
     "test": "npx playwright test ./tests/e2e.spec.ts",
+    "lint": "npm run lint --workspace @app/renderer",
     "start": "node packages/dev-mode.js",
+    "dev": "npm run dev --workspace @app/renderer",
     "typecheck": "npm run typecheck -ws --if-present",
     "openapi": "openapi-ts",
+    "web": "npm run web --workspace @app/preload",
+    "web:build": "npm run web:build --workspace @app/preload",
+    "preview": "npm run preview --workspace @app/renderer",
     "create-renderer": "cd packages && node ./integrate-renderer/create-renderer.js",
     "integrate-renderer": "npm start --workspace @app/integrate-renderer",
     "init": "npm run create-renderer && npm run integrate-renderer && npm install"
