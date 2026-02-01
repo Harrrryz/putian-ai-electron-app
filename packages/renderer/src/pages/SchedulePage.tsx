@@ -36,6 +36,7 @@ const SchedulePage = () => {
     const response = await api.listTodos({
       start_time_from: toRangeIso(rangeStart),
       end_time_to: toRangeIso(rangeEnd, true),
+      include_series_items: true,
       pageSize: 200,
     })
 
