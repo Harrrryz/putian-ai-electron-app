@@ -12,6 +12,7 @@ import {
   ModalFooter,
   ModalHeader,
   Spinner,
+  Switch,
   Textarea,
 } from '@heroui/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -40,12 +41,27 @@ const emptyForm: TodoFormState = {
   importance: 'none',
 }
 
+const startOfDay = (value: Date) => {
+  const date = new Date(value)
+  date.setHours(0, 0, 0, 0)
+  return date
+}
+
+const endOfDay = (value: Date) => {
+  const date = new Date(value)
+  date.setHours(23, 59, 59, 999)
+  return date
+}
+
 const TodosPage = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [todos, setTodos] = useState<TodoModel[]>([])
+  const [currentTodos, setCurrentTodos] = useState<TodoModel[]>([])
+  const [historyTodos, setHistoryTodos] = useState<TodoModel[]>([])
   const [tags, setTags] = useState<TagModel[]>([])
   const [search, setSearch] = useState('')
+  const [includeSeriesItems, setIncludeSeriesItems] = useState(true)
+  const [historyOpen, setHistoryOpen] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
   const [formState, setFormState] = useState<TodoFormState>(emptyForm)
   const [formError, setFormError] = useState<string | null>(null)
@@ -57,13 +73,37 @@ const TodosPage = () => {
     setLoading(true)
     setError(null)
 
-    const [todoResponse, tagResponse] = await Promise.all([
-      api.listTodos({ searchString: search, pageSize: 120 }),
+    const todayStart = startOfDay(new Date())
+    const rangeEnd = endOfDay(
+      new Date(todayStart.getTime() + 6 * 24 * 60 * 60 * 1000),
+    )
+    const historyEnd = new Date(todayStart.getTime() - 1)
+
+    const [currentResponse, historyResponse, tagResponse] = await Promise.all([
+      api.listTodos({
+        searchString: search,
+        include_series_items: includeSeriesItems,
+        start_time_from: todayStart.toISOString(),
+        end_time_to: rangeEnd.toISOString(),
+        pageSize: 120,
+      }),
+      api.listTodos({
+        searchString: search,
+        include_series_items: includeSeriesItems,
+        start_time_to: historyEnd.toISOString(),
+        pageSize: 200,
+      }),
       api.listTags(),
     ])
 
-    if (!todoResponse.ok) {
-      setError(todoResponse.error)
+    if (!currentResponse.ok) {
+      setError(currentResponse.error)
+      setLoading(false)
+      return
+    }
+
+    if (!historyResponse.ok) {
+      setError(historyResponse.error)
       setLoading(false)
       return
     }
@@ -74,24 +114,23 @@ const TodosPage = () => {
       return
     }
 
-    setTodos(todoResponse.data.items ?? [])
+    setCurrentTodos(currentResponse.data.items ?? [])
+    setHistoryTodos(historyResponse.data.items ?? [])
     setTags(tagResponse.data.items ?? [])
     setLoading(false)
-  }, [search])
+  }, [includeSeriesItems, search])
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadData()
   }, [loadData])
 
-  const filteredTodos = useMemo(() => {
-    if (!search) {
-      return todos
+  const historySummary = useMemo(() => {
+    if (historyTodos.length === 0) {
+      return '暂无历史任务'
     }
-    return todos.filter((todo) =>
-      todo.item.toLowerCase().includes(search.toLowerCase()),
-    )
-  }, [todos, search])
+    return `已折叠 ${historyTodos.length} 条历史任务`
+  }, [historyTodos])
 
   const openNew = () => {
     setFormState(emptyForm)
@@ -224,6 +263,18 @@ const TodosPage = () => {
           onValueChange={setSearch}
           className="max-w-sm"
         />
+        <Switch
+          size="sm"
+          color="success"
+          isSelected={includeSeriesItems}
+          onValueChange={setIncludeSeriesItems}
+          classNames={{
+            base: 'gap-2',
+            label: 'text-[10px] uppercase tracking-[0.2em] text-[var(--ink-soft)]',
+          }}
+        >
+          周期任务
+        </Switch>
         <Button variant="flat" onPress={loadData}>
           刷新列表
         </Button>
@@ -235,17 +286,17 @@ const TodosPage = () => {
         </div>
       ) : null}
 
-      {filteredTodos.length === 0 ? (
+      {currentTodos.length === 0 ? (
         <EmptyState
           title="暂无任务"
-          description="创建你的第一个 Todo，开始安排日程。"
+          description="最近 7 天暂无任务，可以通过搜索或新建补充。"
           actionLabel="新建任务"
           onAction={openNew}
           icon="🗒️"
         />
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
-          {filteredTodos.map((todo) => (
+          {currentTodos.map((todo) => (
             <Card key={todo.id} className="app-surface app-card rounded-3xl">
               <CardHeader className="flex items-start justify-between gap-3">
                 <div>
@@ -293,6 +344,50 @@ const TodosPage = () => {
           ))}
         </div>
       )}
+
+      <Card className="app-surface app-card rounded-3xl">
+        <CardHeader className="flex items-center justify-between gap-3">
+          <div>
+            <p className="text-base font-semibold text-[var(--ink-strong)]">
+              历史任务
+            </p>
+            <p className="text-xs text-[var(--ink-soft)]">
+              起始时间早于今天的任务
+            </p>
+          </div>
+          <Button
+            variant="flat"
+            size="sm"
+            onPress={() => setHistoryOpen((prev) => !prev)}
+          >
+            {historyOpen ? '收起' : '展开'}
+          </Button>
+        </CardHeader>
+        <CardBody className="app-card-body space-y-3">
+          {!historyOpen ? (
+            <p className="text-sm text-[var(--ink-soft)]">{historySummary}</p>
+          ) : historyTodos.length === 0 ? (
+            <p className="text-sm text-[var(--ink-soft)]">暂无历史任务</p>
+          ) : (
+            <div className="grid gap-3 md:grid-cols-2">
+              {historyTodos.map((todo) => (
+                <div
+                  key={todo.id}
+                  className="rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-muted)] px-4 py-3"
+                >
+                  <p className="font-medium text-[var(--ink-strong)]">
+                    {todo.item}
+                  </p>
+                  <p className="text-xs text-[var(--ink-soft)]">
+                    {formatDateTime(todo.start_time)} -{' '}
+                    {formatDateTime(todo.end_time)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardBody>
+      </Card>
 
       <Divider className="my-4" />
 

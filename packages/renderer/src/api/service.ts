@@ -95,6 +95,10 @@ const toResult = async <T>(
   }
 }
 
+type AgentTodoRequestWithTimezone = AgentTodoRequest & {
+  timezone?: string
+}
+
 export const api = {
   login: (payload: AccountLogin) =>
     toResult<OAuth2Login>(
@@ -123,10 +127,11 @@ export const api = {
     start_time_to?: string
     end_time_from?: string
     end_time_to?: string
+    include_series_items?: boolean
   }) =>
     toResult<ListTodosResponse>(
       listTodos({
-        query,
+        query: query as Record<string, unknown> | undefined,
         responseStyle: 'fields',
       }),
     ),
@@ -162,12 +167,12 @@ export const api = {
         responseStyle: 'fields',
       }),
     ),
-  agentCreate: (payload: AgentTodoRequest) =>
+  agentCreate: (payload: AgentTodoRequestWithTimezone) =>
     toResult<AgentCreateTodoResponse>(
       agentCreateTodo({ body: payload, responseStyle: 'fields' }),
     ),
   agentCreateStream: (
-    payload: AgentTodoRequest,
+    payload: AgentTodoRequestWithTimezone,
     options?: {
       onEvent?: (event: { event?: string; data: unknown }) => void
       onError?: (error: unknown) => void
