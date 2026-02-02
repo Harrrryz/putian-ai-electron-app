@@ -295,54 +295,70 @@ const TodosPage = () => {
           icon="🗒️"
         />
       ) : (
-        <div className="grid gap-4 lg:grid-cols-2">
-          {currentTodos.map((todo) => (
-            <Card key={todo.id} className="app-surface app-card rounded-3xl">
-              <CardHeader className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-lg font-semibold text-[var(--ink-strong)]">
-                    {todo.item}
-                  </p>
-                  <p className="text-xs text-[var(--ink-soft)]">
-                    {formatDateTime(todo.start_time)} -{' '}
-                    {formatDateTime(todo.end_time)}
-                  </p>
-                </div>
-                <Chip color="success" variant="flat" size="sm">
-                  {todo.importance}
-                </Chip>
-              </CardHeader>
-              <CardBody className="app-card-body space-y-3">
-                <p className="text-sm text-[var(--ink-soft)]">
-                  {todo.description || '暂无描述'}
-                </p>
-                {todo.tags && todo.tags.length ? (
-                  <div className="flex flex-wrap gap-2">
-                    {todo.tags.map((tag) => (
-                      <Chip key={tag} size="sm" variant="flat">
-                        {tag}
+        <Card className="app-surface app-card rounded-3xl">
+          <CardHeader className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-base font-semibold text-[var(--ink-strong)]">
+                近 7 天任务
+              </p>
+              <p className="text-xs text-[var(--ink-soft)]">
+                共 {currentTodos.length} 条
+              </p>
+            </div>
+          </CardHeader>
+          <CardBody className="app-card-body">
+            <div className="max-h-[60vh] overflow-auto pr-1">
+              <div className="grid gap-4 lg:grid-cols-2">
+                {currentTodos.map((todo) => (
+                  <Card key={todo.id} className="app-surface app-card rounded-3xl">
+                    <CardHeader className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-lg font-semibold text-[var(--ink-strong)]">
+                          {todo.item}
+                        </p>
+                        <p className="text-xs text-[var(--ink-soft)]">
+                          {formatDateTime(todo.start_time)} -{' '}
+                          {formatDateTime(todo.end_time)}
+                        </p>
+                      </div>
+                      <Chip color="success" variant="flat" size="sm">
+                        {todo.importance}
                       </Chip>
-                    ))}
-                  </div>
-                ) : null}
-                <div className="flex flex-wrap gap-2">
-                  <Button size="sm" variant="flat" onPress={() => openEdit(todo)}>
-                    编辑
-                  </Button>
-                  <Button
-                    size="sm"
-                    color="danger"
-                    variant="light"
-                    onPress={() => handleDelete(todo.id)}
-                    isLoading={saving}
-                  >
-                    删除
-                  </Button>
-                </div>
-              </CardBody>
-            </Card>
-          ))}
-        </div>
+                    </CardHeader>
+                    <CardBody className="app-card-body space-y-3">
+                      <p className="text-sm text-[var(--ink-soft)]">
+                        {todo.description || '暂无描述'}
+                      </p>
+                      {todo.tags && todo.tags.length ? (
+                        <div className="flex flex-wrap gap-2">
+                          {todo.tags.map((tag) => (
+                            <Chip key={tag} size="sm" variant="flat">
+                              {tag}
+                            </Chip>
+                          ))}
+                        </div>
+                      ) : null}
+                      <div className="flex flex-wrap gap-2">
+                        <Button size="sm" variant="flat" onPress={() => openEdit(todo)}>
+                          编辑
+                        </Button>
+                        <Button
+                          size="sm"
+                          color="danger"
+                          variant="light"
+                          onPress={() => handleDelete(todo.id)}
+                          isLoading={saving}
+                        >
+                          删除
+                        </Button>
+                      </div>
+                    </CardBody>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </CardBody>
+        </Card>
       )}
 
       <Card className="app-surface app-card rounded-3xl">

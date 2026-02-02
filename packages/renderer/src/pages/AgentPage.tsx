@@ -86,6 +86,7 @@ const AgentPage = () => {
   >({})
   const streamController = useRef<AbortController | null>(null)
   const messageContainerRef = useRef<HTMLDivElement | null>(null)
+  const hasLoadedRef = useRef(false)
 
   const loadUsage = useCallback(async () => {
     const response = await api.getUsageStats()
@@ -162,6 +163,10 @@ const AgentPage = () => {
   }, [])
 
   useEffect(() => {
+    if (hasLoadedRef.current) {
+      return
+    }
+    hasLoadedRef.current = true
     void loadSessions()
   }, [loadSessions])
 

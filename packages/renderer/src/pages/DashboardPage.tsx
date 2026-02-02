@@ -35,11 +35,25 @@ const DashboardPage = () => {
 
     const items = todoResponse.data.items ?? []
     const now = Date.now()
+    const startOfToday = new Date()
+    startOfToday.setHours(0, 0, 0, 0)
+    const endOfToday = new Date()
+    endOfToday.setHours(23, 59, 59, 999)
     const inSevenDays = now + 7 * 24 * 60 * 60 * 1000
 
     const upcoming = items.filter((todo) => {
       const start = new Date(todo.start_time).getTime()
       return !Number.isNaN(start) && start >= now && start <= inSevenDays
+    })
+
+    const upcomingToday = items.filter((todo) => {
+      const start = new Date(todo.start_time).getTime()
+      return (
+        !Number.isNaN(start) &&
+        start >= now &&
+        start >= startOfToday.getTime() &&
+        start <= endOfToday.getTime()
+      )
     })
 
     const highImportance = items.filter((todo) => todo.importance === 'high')
@@ -50,8 +64,7 @@ const DashboardPage = () => {
       high: highImportance.length,
     })
     setUpcomingTodos(
-      [...items]
-        .filter((todo) => todo.start_time)
+      [...upcomingToday]
         .sort(
           (a, b) =>
             new Date(a.start_time).getTime() -
