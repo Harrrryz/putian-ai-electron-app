@@ -85,8 +85,8 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
   }
 
   return (
-    <div className="flex min-h-full items-center justify-center px-4 py-10">
-      <Card className="app-surface app-card w-full max-w-xl rounded-[32px]">
+    <div className="flex min-h-full items-center justify-center px-4 py-8">
+      <Card className="app-surface app-card w-full max-w-xl rounded-lg">
         <CardHeader className="flex flex-col items-start gap-2">
           <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-soft)]">
             Todo AI Desktop
@@ -98,12 +98,12 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
             模块化 Todo 管理 + AI 助手，专为日程规划而生。
           </p>
         </CardHeader>
-        <CardBody className="app-card-body space-y-4">
+        <CardBody className="app-card-body space-y-3">
           <Tabs
             selectedKey={activeTab}
             onSelectionChange={(key) => setActiveTab(String(key))}
             variant="underlined"
-            color="success"
+            color="default"
           >
             <Tab key="login" title="登录">
               <div className="space-y-3">
@@ -125,14 +125,18 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
                 />
                 <div className="flex flex-wrap items-center gap-2">
                   <Button
-                    color="success"
+                    color="default"
+                    variant="flat"
+                    className="app-btn app-btn-primary"
                     onPress={handleLogin}
                     isLoading={busy}
                   >
                     登录
                   </Button>
                   <Button
+                    color="default"
                     variant="flat"
+                    className="app-btn"
                     onPress={handleResendVerification}
                     isDisabled={!loginForm.username || busy}
                   >
@@ -167,7 +171,9 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
                   }
                 />
                 <Button
-                  color="success"
+                  color="default"
+                  variant="flat"
+                  className="app-btn app-btn-primary"
                   onPress={handleRegister}
                   isLoading={busy}
                 >
@@ -177,12 +183,12 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
             </Tab>
           </Tabs>
           {error ? (
-            <div className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
+            <div className="rounded-md bg-red-50 px-4 py-3 text-sm text-red-700">
               {error}
             </div>
           ) : null}
           {notice ? (
-            <div className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+            <div className="app-surface-muted rounded-md px-4 py-3 text-sm text-[var(--ink-soft)]">
               {notice}
             </div>
           ) : null}

@@ -12,6 +12,7 @@ import { api } from '../api/service'
 import type { UsageStatsResponse } from '../api/generated/types.gen'
 import EmptyState from '../components/EmptyState'
 import PageHeader from '../components/PageHeader'
+import { BotIcon } from '../components/Icons'
 import { formatDateTime } from '../utils/datetime'
 
 type ChatMessage = {
@@ -341,25 +342,25 @@ const AgentPage = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Spinner color="success" />
+        <Spinner color="default" />
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader
         title="AI 助手"
         description="通过对话快速创建并调整任务。"
         actions={
           <div className="flex flex-wrap items-center gap-2">
             {usage ? (
-              <div className="rounded-2xl bg-[var(--surface-muted)] px-3 py-2 text-xs text-[var(--ink-soft)]">
+              <div className="rounded-md bg-[var(--surface-muted)] px-3 py-2 text-xs text-[var(--ink-soft)]">
                 <p>本月用量：{usage.usage_count}</p>
                 <p>剩余：{usage.remaining_quota}</p>
               </div>
             ) : null}
-            <div className="flex items-center gap-2 rounded-2xl bg-[var(--surface-muted)] px-3 py-2">
+            <div className="flex items-center gap-2 rounded-md bg-[var(--surface-muted)] px-3 py-2">
               <span className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink-soft)]">
                 Agent
               </span>
@@ -375,7 +376,12 @@ const AgentPage = () => {
                 ))}
               </select>
             </div>
-            <Button variant="flat" onPress={handleNewSession}>
+            <Button
+              color="default"
+              variant="flat"
+              className="app-btn"
+              onPress={handleNewSession}
+            >
               新建会话
             </Button>
           </div>
@@ -383,13 +389,13 @@ const AgentPage = () => {
       />
 
       {error ? (
-        <div className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-md bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
         </div>
       ) : null}
 
-      <div className="space-y-4">
-        <Card className="app-surface app-card rounded-3xl">
+      <div className="space-y-3">
+        <Card className="app-surface app-card rounded-lg">
           <CardBody className="flex-1 min-h-0 p-0">
             <div
               ref={messageContainerRef}
@@ -405,9 +411,9 @@ const AgentPage = () => {
                   return (
                     <div
                       key={message.id}
-                      className={`rounded-2xl px-4 py-3 text-sm ${
+                      className={`rounded-lg px-4 py-3 text-sm ${
                         message.role === 'user'
-                          ? 'ml-auto bg-[var(--accent)] text-white'
+                          ? 'ml-auto bg-[var(--accent)] text-[var(--app-bg)]'
                           : 'bg-[var(--surface-muted)] text-[var(--ink-strong)]'
                       }`}
                     >
@@ -446,14 +452,14 @@ const AgentPage = () => {
                 <EmptyState
                   title="开始一段对话"
                   description="例如：帮我安排明天上午的学习计划。"
-                  icon="🤖"
+                  icon={<BotIcon className="h-6 w-6" />}
                 />
               )}
             </div>
           </CardBody>
         </Card>
 
-        <Card className="app-surface app-card rounded-3xl">
+        <Card className="app-surface app-card rounded-lg">
           <CardBody className="app-card-body space-y-3">
             <Input
               label="发送消息"
@@ -464,7 +470,9 @@ const AgentPage = () => {
             />
             <div className="flex items-center gap-2">
               <Button
-                color="success"
+                color="default"
+                variant="flat"
+                className="app-btn app-btn-primary"
                 onPress={handleSend}
                 isLoading={sending}
                 isDisabled={!draft.trim() || !activeSession}
@@ -483,7 +491,7 @@ const AgentPage = () => {
 
       <Divider />
 
-      <Card className="app-surface app-card rounded-3xl">
+      <Card className="app-surface app-card rounded-lg">
         <CardHeader>
           <p className="text-sm text-[var(--ink-soft)]">
             小提示：AI 助手默认使用 TodoOrchestratorAgent，可根据需求切换不同 agent。

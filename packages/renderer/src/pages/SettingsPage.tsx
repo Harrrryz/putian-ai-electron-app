@@ -17,11 +17,11 @@ const SettingsPage = ({ user, onLogout }: SettingsPageProps) => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader title="设置" description="账户、环境与系统信息。" />
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card className="app-surface app-card rounded-3xl">
+        <Card className="app-surface app-card rounded-lg">
           <CardHeader>
             <p className="text-lg font-semibold text-[var(--ink-strong)]">
               账户信息
@@ -40,13 +40,13 @@ const SettingsPage = ({ user, onLogout }: SettingsPageProps) => {
               <span className="font-semibold text-[var(--ink-strong)]">状态：</span>
               {user.is_verified ? '已验证' : '未验证'}
             </p>
-            <Button color="danger" variant="flat" onPress={handleLogout}>
+            <Button color="default" variant="flat" className="app-btn app-btn-ghost" onPress={handleLogout}>
               退出登录
             </Button>
           </CardBody>
         </Card>
 
-        <Card className="app-surface app-card rounded-3xl">
+        <Card className="app-surface app-card rounded-lg">
           <CardHeader>
             <p className="text-lg font-semibold text-[var(--ink-strong)]">
               连接配置

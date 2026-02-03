@@ -7,7 +7,7 @@ const ThemeToggle = () => {
   return (
     <Switch
       size="sm"
-      color="success"
+      color="default"
       isSelected={isDark}
       onValueChange={(selected) => (selected ? setDark() : setLight())}
       aria-label="切换明暗主题"

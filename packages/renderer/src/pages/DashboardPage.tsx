@@ -84,27 +84,27 @@ const DashboardPage = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Spinner color="success" />
+        <Spinner color="default" />
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="app-surface rounded-3xl px-6 py-8 text-sm text-red-600">
+      <div className="app-surface rounded-md px-5 py-6 text-sm text-red-600">
         {error}
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader
         title="概览"
         description="掌握你的任务节奏与 AI 使用情况。"
       />
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="app-surface app-card rounded-3xl">
+        <Card className="app-surface app-card rounded-lg">
           <CardHeader className="text-xs uppercase tracking-[0.2em] text-[var(--ink-soft)]">
             任务总数
           </CardHeader>
@@ -112,7 +112,7 @@ const DashboardPage = () => {
             {stats.total}
           </CardBody>
         </Card>
-        <Card className="app-surface app-card rounded-3xl">
+        <Card className="app-surface app-card rounded-lg">
           <CardHeader className="text-xs uppercase tracking-[0.2em] text-[var(--ink-soft)]">
             未来 7 天
           </CardHeader>
@@ -120,7 +120,7 @@ const DashboardPage = () => {
             {stats.upcoming}
           </CardBody>
         </Card>
-        <Card className="app-surface app-card rounded-3xl">
+        <Card className="app-surface app-card rounded-lg">
           <CardHeader className="text-xs uppercase tracking-[0.2em] text-[var(--ink-soft)]">
             高优先级
           </CardHeader>
@@ -131,7 +131,7 @@ const DashboardPage = () => {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-        <Card className="app-surface app-card rounded-3xl">
+        <Card className="app-surface app-card rounded-lg">
           <CardHeader className="flex items-center justify-between">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-soft)]">
@@ -147,13 +147,18 @@ const DashboardPage = () => {
               upcomingTodos.map((todo) => (
                 <div
                   key={todo.id}
-                  className="rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-muted)] px-4 py-3"
+                  className="rounded-md border border-[var(--surface-border)] bg-[var(--surface-muted)] px-4 py-3"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <p className="font-medium text-[var(--ink-strong)]">
                       {todo.item}
                     </p>
-                    <Chip size="sm" variant="flat" color="success">
+                    <Chip
+                      size="sm"
+                      variant="flat"
+                      color="default"
+                      className="app-chip"
+                    >
                       {todo.importance}
                     </Chip>
                   </div>
@@ -170,7 +175,7 @@ const DashboardPage = () => {
           </CardBody>
         </Card>
 
-        <Card className="app-surface app-card rounded-3xl">
+        <Card className="app-surface app-card rounded-lg">
           <CardHeader className="flex flex-col items-start gap-1">
             <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-soft)]">
               AI 用量

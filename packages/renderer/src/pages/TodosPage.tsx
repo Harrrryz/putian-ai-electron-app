@@ -20,6 +20,7 @@ import { api, importanceOptions } from '../api/service'
 import type { TagModel, TodoCreate, TodoModel } from '../api/generated/types.gen'
 import EmptyState from '../components/EmptyState'
 import PageHeader from '../components/PageHeader'
+import { TodoIcon } from '../components/Icons'
 import { formatDateTime, toDatetimeLocal, toIsoString } from '../utils/datetime'
 
 type TodoFormState = {
@@ -239,24 +240,29 @@ const TodosPage = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Spinner color="success" />
+        <Spinner color="default" />
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader
         title="Todo 管理"
         description="集中管理任务、时间与优先级。"
         actions={
-          <Button color="success" onPress={openNew}>
+          <Button
+            color="default"
+            variant="flat"
+            className="app-btn app-btn-primary"
+            onPress={openNew}
+          >
             新建任务
           </Button>
         }
       />
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2">
         <Input
           placeholder="搜索任务"
           value={search}
@@ -265,7 +271,7 @@ const TodosPage = () => {
         />
         <Switch
           size="sm"
-          color="success"
+          color="default"
           isSelected={includeSeriesItems}
           onValueChange={setIncludeSeriesItems}
           classNames={{
@@ -275,13 +281,18 @@ const TodosPage = () => {
         >
           周期任务
         </Switch>
-        <Button variant="flat" onPress={loadData}>
+        <Button
+          color="default"
+          variant="flat"
+          className="app-btn"
+          onPress={loadData}
+        >
           刷新列表
         </Button>
       </div>
 
       {error ? (
-        <div className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-md bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
         </div>
       ) : null}
@@ -292,10 +303,10 @@ const TodosPage = () => {
           description="最近 7 天暂无任务，可以通过搜索或新建补充。"
           actionLabel="新建任务"
           onAction={openNew}
-          icon="🗒️"
+          icon={<TodoIcon className="h-6 w-6" />}
         />
       ) : (
-        <Card className="app-surface app-card rounded-3xl">
+        <Card className="app-surface app-card rounded-lg">
           <CardHeader className="flex items-center justify-between gap-3">
             <div>
               <p className="text-base font-semibold text-[var(--ink-strong)]">
@@ -310,7 +321,7 @@ const TodosPage = () => {
             <div className="max-h-[60vh] overflow-auto pr-1">
               <div className="grid gap-4 lg:grid-cols-2">
                 {currentTodos.map((todo) => (
-                  <Card key={todo.id} className="app-surface app-card rounded-3xl">
+                  <Card key={todo.id} className="app-surface app-card rounded-lg">
                     <CardHeader className="flex items-start justify-between gap-3">
                       <div>
                         <p className="text-lg font-semibold text-[var(--ink-strong)]">
@@ -321,7 +332,12 @@ const TodosPage = () => {
                           {formatDateTime(todo.end_time)}
                         </p>
                       </div>
-                      <Chip color="success" variant="flat" size="sm">
+                      <Chip
+                        color="default"
+                        variant="flat"
+                        size="sm"
+                        className="app-chip"
+                      >
                         {todo.importance}
                       </Chip>
                     </CardHeader>
@@ -332,20 +348,32 @@ const TodosPage = () => {
                       {todo.tags && todo.tags.length ? (
                         <div className="flex flex-wrap gap-2">
                           {todo.tags.map((tag) => (
-                            <Chip key={tag} size="sm" variant="flat">
+                            <Chip
+                              key={tag}
+                              size="sm"
+                              variant="flat"
+                              className="app-chip"
+                            >
                               {tag}
                             </Chip>
                           ))}
                         </div>
                       ) : null}
                       <div className="flex flex-wrap gap-2">
-                        <Button size="sm" variant="flat" onPress={() => openEdit(todo)}>
+                        <Button
+                          size="sm"
+                          color="default"
+                          variant="flat"
+                          className="app-btn"
+                          onPress={() => openEdit(todo)}
+                        >
                           编辑
                         </Button>
                         <Button
                           size="sm"
-                          color="danger"
-                          variant="light"
+                          color="default"
+                          variant="flat"
+                          className="app-btn app-btn-ghost"
                           onPress={() => handleDelete(todo.id)}
                           isLoading={saving}
                         >
@@ -361,7 +389,7 @@ const TodosPage = () => {
         </Card>
       )}
 
-      <Card className="app-surface app-card rounded-3xl">
+      <Card className="app-surface app-card rounded-lg">
         <CardHeader className="flex items-center justify-between gap-3">
           <div>
             <p className="text-base font-semibold text-[var(--ink-strong)]">
@@ -372,8 +400,10 @@ const TodosPage = () => {
             </p>
           </div>
           <Button
+            color="default"
             variant="flat"
             size="sm"
+            className="app-btn"
             onPress={() => setHistoryOpen((prev) => !prev)}
           >
             {historyOpen ? '收起' : '展开'}
@@ -389,7 +419,7 @@ const TodosPage = () => {
               {historyTodos.map((todo) => (
                 <div
                   key={todo.id}
-                  className="rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-muted)] px-4 py-3"
+                  className="rounded-md border border-[var(--surface-border)] bg-[var(--surface-muted)] px-4 py-3"
                 >
                   <p className="font-medium text-[var(--ink-strong)]">
                     {todo.item}
@@ -408,7 +438,7 @@ const TodosPage = () => {
       <Divider className="my-4" />
 
       <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-        <Card className="app-surface app-card rounded-3xl">
+        <Card className="app-surface app-card rounded-lg">
           <CardHeader>
             <p className="text-lg font-semibold text-[var(--ink-strong)]">
               标签管理
@@ -422,7 +452,7 @@ const TodosPage = () => {
                     key={tag.id}
                     size="sm"
                     variant="flat"
-                    className="cursor-pointer"
+                    className="app-chip cursor-pointer"
                     onClose={() => handleDeleteTag(tag.id)}
                   >
                     {tag.name}
@@ -448,7 +478,13 @@ const TodosPage = () => {
                   setTagDraft((prev) => ({ ...prev, color: value }))
                 }
               />
-              <Button color="success" onPress={handleCreateTag} isLoading={tagBusy}>
+              <Button
+                color="default"
+                variant="flat"
+                className="app-btn app-btn-primary"
+                onPress={handleCreateTag}
+                isLoading={tagBusy}
+              >
                 创建标签
               </Button>
             </div>
@@ -508,7 +544,7 @@ const TodosPage = () => {
                       重要程度
                     </label>
                     <select
-                      className="mt-2 w-full rounded-xl border border-[var(--surface-border)] bg-[var(--surface-muted)] px-3 py-2 text-sm"
+                      className="mt-2 w-full rounded-md border border-[var(--surface-border)] bg-[var(--surface-muted)] px-3 py-2 text-sm"
                       value={formState.importance}
                       onChange={(event) =>
                         setFormState((prev) => ({
@@ -526,16 +562,27 @@ const TodosPage = () => {
                   </div>
                 </div>
                 {formError ? (
-                  <div className="rounded-2xl bg-red-50 px-3 py-2 text-sm text-red-700">
+                  <div className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
                     {formError}
                   </div>
                 ) : null}
               </ModalBody>
               <ModalFooter>
-                <Button variant="flat" onPress={onClose}>
+                <Button
+                  color="default"
+                  variant="flat"
+                  className="app-btn"
+                  onPress={onClose}
+                >
                   取消
                 </Button>
-                <Button color="success" onPress={handleSave} isLoading={saving}>
+                <Button
+                  color="default"
+                  variant="flat"
+                  className="app-btn app-btn-primary"
+                  onPress={handleSave}
+                  isLoading={saving}
+                >
                   保存
                 </Button>
               </ModalFooter>

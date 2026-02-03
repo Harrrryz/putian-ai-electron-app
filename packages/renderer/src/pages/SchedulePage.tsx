@@ -4,6 +4,7 @@ import { api } from '../api/service'
 import type { TodoModel } from '../api/generated/types.gen'
 import EmptyState from '../components/EmptyState'
 import PageHeader from '../components/PageHeader'
+import { CalendarIcon } from '../components/Icons'
 import { formatDateTime, formatDateOnly } from '../utils/datetime'
 
 const toRangeIso = (dateValue: string, endOfDay = false) => {
@@ -72,12 +73,17 @@ const SchedulePage = () => {
   }, [grouped])
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader
         title="日程视图"
         description="按日期浏览你的任务安排。"
         actions={
-          <Button variant="flat" onPress={loadData}>
+          <Button
+            color="default"
+            variant="flat"
+            className="app-btn"
+            onPress={loadData}
+          >
             刷新
           </Button>
         }
@@ -100,22 +106,22 @@ const SchedulePage = () => {
 
       {loading ? (
         <div className="flex items-center justify-center py-16">
-          <Spinner color="success" />
+          <Spinner color="default" />
         </div>
       ) : error ? (
-        <div className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-md bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
         </div>
       ) : sortedGroups.length === 0 ? (
         <EmptyState
           title="暂无日程"
           description="当前日期范围内没有任务。"
-          icon="🗓️"
+          icon={<CalendarIcon className="h-6 w-6" />}
         />
       ) : (
         <div className="space-y-4">
           {sortedGroups.map(([day, items]) => (
-            <Card key={day} className="app-surface app-card rounded-3xl">
+            <Card key={day} className="app-surface app-card rounded-lg">
               <CardHeader>
                 <p className="text-lg font-semibold text-[var(--ink-strong)]">
                   {day}
@@ -125,7 +131,7 @@ const SchedulePage = () => {
                 {items.map((todo) => (
                   <div
                     key={todo.id}
-                    className="rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-muted)] px-4 py-3"
+                    className="rounded-md border border-[var(--surface-border)] bg-[var(--surface-muted)] px-4 py-3"
                   >
                     <p className="font-medium text-[var(--ink-strong)]">
                       {todo.item}
