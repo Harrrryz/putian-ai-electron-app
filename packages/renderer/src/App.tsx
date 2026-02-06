@@ -100,76 +100,74 @@ const App = () => {
   return (
     <div className="min-h-full">
       <div className="mx-auto min-h-full max-w-6xl px-4 py-4">
-        <div className="app-surface app-shell min-h-[calc(100vh-32px)]">
-          <div className="grid h-full lg:grid-cols-[260px_1fr]">
-            <aside className="app-shell-aside">
+        <div className="app-surface app-shell grid h-[calc(100dvh-32px)] overflow-hidden lg:grid-cols-[260px_1fr]">
+          <aside className="app-shell-aside">
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-soft)]">
+                Todo AI
+              </p>
+              <div className="mt-2 flex items-center justify-between gap-3">
+                <p className="app-title text-2xl font-semibold text-[var(--ink-strong)]">
+                  工作台
+                </p>
+                <ThemeToggle />
+              </div>
+            </div>
+            <Divider />
+            <div className="flex flex-wrap gap-2 lg:flex-col">
+              {NAV_ITEMS.map((item) => (
+                <Button
+                  key={item.key}
+                  variant="flat"
+                  color="default"
+                  className="app-nav-item justify-start"
+                  data-active={activePage === item.key}
+                  onPress={() => setActivePage(item.key)}
+                >
+                  <div className="flex items-center gap-3">
+                    <item.Icon className="app-nav-icon h-4 w-4" />
+                    <div className="flex flex-col items-start">
+                      <span className="text-sm font-semibold">
+                        {item.label}
+                      </span>
+                      <span className="text-xs opacity-70">
+                        {item.description}
+                      </span>
+                    </div>
+                  </div>
+                </Button>
+              ))}
+            </div>
+          </aside>
+
+          <main className="app-shell-main">
+            <div className="app-shell-header">
               <div>
                 <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-soft)]">
-                  Todo AI
+                  当前模块
                 </p>
-                <div className="mt-2 flex items-center justify-between gap-3">
-                  <p className="app-title text-2xl font-semibold text-[var(--ink-strong)]">
-                    工作台
-                  </p>
-                  <ThemeToggle />
-                </div>
+                <p className="app-title text-2xl font-semibold text-[var(--ink-strong)]">
+                  {NAV_ITEMS.find((item) => item.key === activePage)?.label}
+                </p>
               </div>
-              <Divider />
-              <div className="flex flex-wrap gap-2 lg:flex-col">
-                {NAV_ITEMS.map((item) => (
-                  <Button
-                    key={item.key}
-                    variant="flat"
-                    color="default"
-                    className="app-nav-item justify-start"
-                    data-active={activePage === item.key}
-                    onPress={() => setActivePage(item.key)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <item.Icon className="app-nav-icon h-4 w-4" />
-                      <div className="flex flex-col items-start">
-                        <span className="text-sm font-semibold">
-                          {item.label}
-                        </span>
-                        <span className="text-xs opacity-70">
-                          {item.description}
-                        </span>
-                      </div>
-                    </div>
-                  </Button>
-                ))}
+              {user ? (
+                <User
+                  name={user.name || 'Todo User'}
+                  description={user.email}
+                  avatarProps={{
+                    radius: 'full',
+                    color: 'default',
+                    name: user.name || 'TU',
+                  }}
+                />
+              ) : null}
+            </div>
+            <div className="app-shell-content">
+              <div key={activePage} className="fade-up">
+                {currentPage}
               </div>
-            </aside>
-
-            <main className="app-shell-main">
-              <div className="app-shell-header">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-soft)]">
-                    当前模块
-                  </p>
-                  <p className="app-title text-2xl font-semibold text-[var(--ink-strong)]">
-                    {NAV_ITEMS.find((item) => item.key === activePage)?.label}
-                  </p>
-                </div>
-                {user ? (
-                  <User
-                    name={user.name || 'Todo User'}
-                    description={user.email}
-                    avatarProps={{
-                      radius: 'full',
-                      color: 'default',
-                      name: user.name || 'TU',
-                    }}
-                  />
-                ) : null}
-              </div>
-              <div className="app-shell-content">
-                <div key={activePage} className="fade-up">
-                  {currentPage}
-                </div>
-              </div>
-            </main>
-          </div>
+            </div>
+          </main>
         </div>
       </div>
     </div>

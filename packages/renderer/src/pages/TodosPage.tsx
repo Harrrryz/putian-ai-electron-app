@@ -33,6 +33,13 @@ type TodoFormState = {
   importance: string
 }
 
+type DescriptionMeta = {
+  raw: string
+  listItems: string[]
+  hasOverflow: boolean
+  isEmpty: boolean
+}
+
 const emptyForm: TodoFormState = {
   item: '',
   description: '',
@@ -54,6 +61,47 @@ const endOfDay = (value: Date) => {
   return date
 }
 
+const normalizeDescription = (description?: string | null): DescriptionMeta => {
+  const rawText = (description ?? '').trim()
+  if (!rawText) {
+    return {
+      raw: '暂无描述',
+      listItems: [],
+      hasOverflow: false,
+      isEmpty: true,
+    }
+  }
+
+  const normalized = rawText.replace(/\r\n/g, '\n')
+  const lines = normalized
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+  const stripMarker = (value: string) =>
+    value.replace(/^(\d+\.|[-*•])\s+/, '').trim()
+
+  let listItems: string[] = []
+
+  if (lines.length > 1) {
+    listItems = lines.map(stripMarker).filter(Boolean)
+  } else if (/\d+\.\s+/.test(normalized)) {
+    const parts = normalized
+      .split(/\d+\.\s+/)
+      .map((part) => part.trim())
+      .filter(Boolean)
+    if (parts.length > 1) {
+      listItems = parts
+    }
+  }
+
+  return {
+    raw: normalized,
+    listItems,
+    hasOverflow: listItems.length > 2 || normalized.length > 60 || lines.length > 2,
+    isEmpty: false,
+  }
+}
+
 const TodosPage = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -69,6 +117,7 @@ const TodosPage = () => {
   const [saving, setSaving] = useState(false)
   const [tagDraft, setTagDraft] = useState({ name: '', color: '' })
   const [tagBusy, setTagBusy] = useState(false)
+  const [expandedTodos, setExpandedTodos] = useState<Record<string, boolean>>({})
 
   const loadData = useCallback(async () => {
     setLoading(true)
@@ -151,6 +200,10 @@ const TodosPage = () => {
     })
     setFormError(null)
     setModalOpen(true)
+  }
+
+  const toggleExpanded = (todoId: string) => {
+    setExpandedTodos((prev) => ({ ...prev, [todoId]: !prev[todoId] }))
   }
 
   const handleSave = async () => {
@@ -318,71 +371,109 @@ const TodosPage = () => {
             </div>
           </CardHeader>
           <CardBody className="app-card-body">
-            <div className="max-h-[60vh] overflow-auto pr-1">
-              <div className="grid gap-4 lg:grid-cols-2">
-                {currentTodos.map((todo) => (
-                  <Card key={todo.id} className="app-surface app-card rounded-lg">
-                    <CardHeader className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="text-lg font-semibold text-[var(--ink-strong)]">
-                          {todo.item}
-                        </p>
-                        <p className="text-xs text-[var(--ink-soft)]">
-                          {formatDateTime(todo.start_time)} -{' '}
-                          {formatDateTime(todo.end_time)}
-                        </p>
-                      </div>
-                      <Chip
-                        color="default"
-                        variant="flat"
-                        size="sm"
-                        className="app-chip"
-                      >
-                        {todo.importance}
-                      </Chip>
-                    </CardHeader>
-                    <CardBody className="app-card-body space-y-3">
-                      <p className="text-sm text-[var(--ink-soft)]">
-                        {todo.description || '暂无描述'}
-                      </p>
-                      {todo.tags && todo.tags.length ? (
-                        <div className="flex flex-wrap gap-2">
-                          {todo.tags.map((tag) => (
+            <div className="max-h-[32vh] overflow-auto pr-1">
+              <div className="grid gap-5 lg:grid-cols-2">
+                {currentTodos.map((todo) => {
+                  const { raw, listItems, hasOverflow, isEmpty } =
+                    normalizeDescription(todo.description)
+                  const isExpanded = Boolean(expandedTodos[todo.id])
+                  const showToggle = hasOverflow && !isEmpty
+                  const showList = listItems.length > 1
+                  const tags = todo.tags ?? []
+                  const extraTagCount = tags.length
+                  const visibleItems =
+                    !isExpanded && listItems.length > 2
+                      ? listItems.slice(0, 2)
+                      : listItems
+
+                  return (
+                    <Card key={todo.id} className="app-surface app-card rounded-lg">
+                      <CardHeader className="flex items-start justify-between gap-2 px-2 pb-1 pt-2">
+                        <div className="space-y-0.5">
+                          <p className="text-[13px] font-semibold text-[var(--ink-strong)]">
+                            {todo.item}
+                          </p>
+                          <p className="text-[10px] text-[var(--ink-soft)]">
+                            {formatDateTime(todo.start_time)} -{' '}
+                            {formatDateTime(todo.end_time)}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {extraTagCount > 0 ? (
                             <Chip
-                              key={tag}
                               size="sm"
                               variant="flat"
-                              className="app-chip"
+                              className="app-chip px-2 py-0 text-[10px] leading-tight opacity-70"
                             >
-                              {tag}
+                              +{extraTagCount}
                             </Chip>
-                          ))}
+                          ) : null}
+                          <Chip
+                            color="default"
+                            variant="flat"
+                            size="sm"
+                            className="app-chip px-2 py-0 text-[10px] leading-tight"
+                          >
+                            {todo.importance}
+                          </Chip>
                         </div>
-                      ) : null}
-                      <div className="flex flex-wrap gap-2">
-                        <Button
-                          size="sm"
-                          color="default"
-                          variant="flat"
-                          className="app-btn"
-                          onPress={() => openEdit(todo)}
-                        >
-                          编辑
-                        </Button>
-                        <Button
-                          size="sm"
-                          color="default"
-                          variant="flat"
-                          className="app-btn app-btn-ghost"
-                          onPress={() => handleDelete(todo.id)}
-                          isLoading={saving}
-                        >
-                          删除
-                        </Button>
-                      </div>
-                    </CardBody>
-                  </Card>
-                ))}
+                      </CardHeader>
+                      <CardBody className="app-card-body space-y-2 px-2 pb-2 pt-1">
+                        <div className="space-y-2">
+                          {showList ? (
+                            <ul className="app-text-list">
+                              {visibleItems.map((item, index) => (
+                                <li key={`${todo.id}-desc-${index}`}>{item}</li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p
+                              className={`text-[12px] text-[var(--ink-soft)] leading-[1.35] ${
+                                !isExpanded && hasOverflow ? 'app-clamp-2' : ''
+                              }`}
+                            >
+                              {raw}
+                            </p>
+                          )}
+                          {!isExpanded && listItems.length > 2 ? (
+                            <p className="text-xs text-[var(--ink-soft)]">...</p>
+                          ) : null}
+                          {showToggle ? (
+                            <button
+                              type="button"
+                              className="text-xs text-[var(--ink-strong)] underline decoration-[var(--accent-soft)] underline-offset-4"
+                              onClick={() => toggleExpanded(todo.id)}
+                              aria-expanded={isExpanded}
+                            >
+                              {isExpanded ? '收起' : '展开'}
+                            </button>
+                          ) : null}
+                        </div>
+                        <div className="app-card-footer flex flex-wrap items-center gap-2">
+                          <Button
+                            size="sm"
+                            color="default"
+                            variant="flat"
+                            className="app-btn app-btn-primary app-btn-compact"
+                            onPress={() => openEdit(todo)}
+                          >
+                            编辑
+                          </Button>
+                          <Button
+                            size="sm"
+                            color="default"
+                            variant="flat"
+                            className="app-btn app-btn-ghost app-btn-compact"
+                            onPress={() => handleDelete(todo.id)}
+                            isLoading={saving}
+                          >
+                            删除
+                          </Button>
+                        </div>
+                      </CardBody>
+                    </Card>
+                  )
+                })}
               </div>
             </div>
           </CardBody>
@@ -452,7 +543,7 @@ const TodosPage = () => {
                     key={tag.id}
                     size="sm"
                     variant="flat"
-                    className="app-chip cursor-pointer"
+                    className="app-chip cursor-pointer px-3 py-1 text-xs"
                     onClose={() => handleDeleteTag(tag.id)}
                   >
                     {tag.name}
@@ -462,13 +553,20 @@ const TodosPage = () => {
                 <p className="text-sm text-[var(--ink-soft)]">暂无标签</p>
               )}
             </div>
-            <div className="grid gap-3 md:grid-cols-[1fr_120px_auto]">
+            <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_180px_auto] md:items-end">
               <Input
                 label="新标签"
                 value={tagDraft.name}
                 onValueChange={(value) =>
                   setTagDraft((prev) => ({ ...prev, name: value }))
                 }
+                classNames={{
+                  inputWrapper:
+                    'min-h-[44px] rounded-md bg-[var(--surface-muted)] border border-[var(--surface-border)]',
+                  input:
+                    'text-sm text-[var(--ink-strong)] placeholder:text-[var(--ink-soft)]',
+                  label: 'text-xs font-medium text-[var(--ink-strong)]',
+                }}
               />
               <Input
                 label="颜色"
@@ -477,11 +575,18 @@ const TodosPage = () => {
                 onValueChange={(value) =>
                   setTagDraft((prev) => ({ ...prev, color: value }))
                 }
+                classNames={{
+                  inputWrapper:
+                    'min-h-[44px] rounded-md bg-[var(--surface-muted)] border border-[var(--surface-border)]',
+                  input:
+                    'text-sm text-[var(--ink-strong)] placeholder:text-[var(--ink-soft)]',
+                  label: 'text-xs font-medium text-[var(--ink-strong)]',
+                }}
               />
               <Button
                 color="default"
                 variant="flat"
-                className="app-btn app-btn-primary"
+                className="app-btn app-btn-primary app-btn-hit w-full md:w-auto"
                 onPress={handleCreateTag}
                 isLoading={tagBusy}
               >
