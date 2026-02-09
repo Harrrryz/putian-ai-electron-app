@@ -30,6 +30,7 @@ const applyTheme = (resolvedTheme: 'light' | 'dark') => {
   const root = document.documentElement
   root.classList.toggle('dark', resolvedTheme === 'dark')
   root.dataset.theme = resolvedTheme
+  root.dataset.colorScheme = resolvedTheme
 }
 
 const useThemePreference = () => {

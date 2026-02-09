@@ -6,8 +6,9 @@ import FullCalendar, {
 import interactionPlugin from '@fullcalendar/react/interaction'
 import listPlugin from '@fullcalendar/react/list'
 import zhCnLocale from '@fullcalendar/react/locales/zh-cn'
+import multimonthPlugin from '@fullcalendar/react/multimonth'
 import timeGridPlugin from '@fullcalendar/react/timegrid'
-import themePlugin from '@fullcalendar/react/themes/classic'
+import themePlugin from '@fullcalendar/react/themes/monarch'
 import { Button, Spinner } from '@heroui/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { api } from '../api/service'
@@ -16,8 +17,8 @@ import PageHeader from '../components/PageHeader'
 import { formatDateTime } from '../utils/datetime'
 
 import '@fullcalendar/react/skeleton.css'
-import '@fullcalendar/react/themes/classic/theme.css'
-import '@fullcalendar/react/themes/classic/palette.css'
+import '@fullcalendar/react/themes/monarch/theme.css'
+import '@fullcalendar/react/themes/monarch/palettes/purple.css'
 
 type VisibleRange = {
   start: Date
@@ -106,7 +107,6 @@ const SchedulePage = () => {
     <div className="space-y-4">
       <PageHeader
         title="日程视图"
-        description="基于 FullCalendar v7 按月/周/日浏览任务安排。"
         actions={
           <Button
             variant="secondary"
@@ -139,12 +139,13 @@ const SchedulePage = () => {
             dayGridPlugin,
             timeGridPlugin,
             listPlugin,
+            multimonthPlugin,
           ]}
           initialView="dayGridMonth"
           headerToolbar={{
             left: 'prev,next today',
             center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek,multiMonthYear',
           }}
           todayText="今天"
           monthText="月"
