@@ -1,4 +1,3 @@
-import { ThemeProps, useTheme } from '@heroui/use-theme'
 import { useEffect, useMemo, useState } from 'react'
 
 const THEME_PREFERENCE_KEY = 'app-theme-preference'
@@ -8,32 +7,42 @@ type ThemePreference = 'light' | 'dark' | 'system'
 
 const getStoredPreference = (): ThemePreference => {
   if (typeof window === 'undefined') {
-    return ThemeProps.SYSTEM
+    return 'system'
   }
 
   const stored = localStorage.getItem(THEME_PREFERENCE_KEY)
 
-  if (
-    stored === ThemeProps.LIGHT ||
-    stored === ThemeProps.DARK ||
-    stored === ThemeProps.SYSTEM
-  ) {
+  if (stored === 'light' || stored === 'dark' || stored === 'system') {
     return stored
   }
 
-  return ThemeProps.SYSTEM
+  return 'system'
 }
 
 const getSystemTheme = () =>
-  window.matchMedia(MEDIA_QUERY).matches ? ThemeProps.DARK : ThemeProps.LIGHT
+  window.matchMedia(MEDIA_QUERY).matches ? 'dark' : 'light'
+
+const applyTheme = (resolvedTheme: 'light' | 'dark') => {
+  if (typeof document === 'undefined') {
+    return
+  }
+
+  const root = document.documentElement
+  root.classList.toggle('dark', resolvedTheme === 'dark')
+  root.dataset.theme = resolvedTheme
+}
 
 const useThemePreference = () => {
   const [preference, setPreference] = useState<ThemePreference>(() =>
     getStoredPreference(),
   )
-  const { theme, setTheme } = useTheme(
-    preference === ThemeProps.SYSTEM ? ThemeProps.SYSTEM : preference,
-  )
+  const [systemTheme, setSystemTheme] = useState<'light' | 'dark'>(() => {
+    if (typeof window === 'undefined') {
+      return 'light'
+    }
+
+    return getSystemTheme()
+  })
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -44,31 +53,36 @@ const useThemePreference = () => {
   }, [preference])
 
   useEffect(() => {
-    if (preference === ThemeProps.SYSTEM) {
-      setTheme(ThemeProps.SYSTEM)
+    if (typeof window === 'undefined') {
       return
     }
 
-    setTheme(preference)
-  }, [preference, setTheme])
-
-  const resolvedTheme = useMemo(() => {
-    if (theme === ThemeProps.SYSTEM) {
-      if (typeof window === 'undefined') {
-        return ThemeProps.LIGHT
-      }
-
-      return getSystemTheme()
+    const media = window.matchMedia(MEDIA_QUERY)
+    const updateSystemTheme = () => {
+      setSystemTheme(media.matches ? 'dark' : 'light')
     }
 
-    return theme
-  }, [theme])
+    updateSystemTheme()
+    media.addEventListener('change', updateSystemTheme)
 
-  const isDark = resolvedTheme === ThemeProps.DARK
+    return () => {
+      media.removeEventListener('change', updateSystemTheme)
+    }
+  }, [])
 
-  const setLight = () => setPreference(ThemeProps.LIGHT)
-  const setDark = () => setPreference(ThemeProps.DARK)
-  const toggle = () => setPreference(isDark ? ThemeProps.LIGHT : ThemeProps.DARK)
+  const resolvedTheme = useMemo(() => {
+    return preference === 'system' ? systemTheme : preference
+  }, [preference, systemTheme])
+
+  useEffect(() => {
+    applyTheme(resolvedTheme)
+  }, [resolvedTheme])
+
+  const isDark = resolvedTheme === 'dark'
+
+  const setLight = () => setPreference('light')
+  const setDark = () => setPreference('dark')
+  const toggle = () => setPreference(isDark ? 'light' : 'dark')
 
   return {
     preference,

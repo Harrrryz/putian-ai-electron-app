@@ -1,19 +1,15 @@
 import {
   Button,
   Card,
-  CardBody,
-  CardHeader,
   Chip,
-  Divider,
   Input,
+  Label,
   Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
+  Separator,
   Spinner,
   Switch,
-  Textarea,
+  TextArea,
+  TextField,
 } from '@heroui/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { api, importanceOptions } from '../api/service'
@@ -293,7 +289,7 @@ const TodosPage = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Spinner color="default" />
+        <Spinner />
       </div>
     )
   }
@@ -305,8 +301,7 @@ const TodosPage = () => {
         description="集中管理任务、时间与优先级。"
         actions={
           <Button
-            color="default"
-            variant="flat"
+            variant="primary"
             className="app-btn app-btn-primary"
             onPress={openNew}
           >
@@ -317,26 +312,27 @@ const TodosPage = () => {
 
       <div className="flex flex-wrap items-center gap-2">
         <Input
+          aria-label="搜索任务"
           placeholder="搜索任务"
           value={search}
-          onValueChange={setSearch}
-          className="max-w-sm"
+          onChange={(event) => setSearch(event.target.value)}
+          className="app-input max-w-sm"
         />
         <Switch
           size="sm"
-          color="default"
           isSelected={includeSeriesItems}
-          onValueChange={setIncludeSeriesItems}
-          classNames={{
-            base: 'gap-2',
-            label: 'text-[10px] uppercase tracking-[0.2em] text-[var(--ink-soft)]',
-          }}
+          onChange={setIncludeSeriesItems}
+          className="gap-2"
         >
-          周期任务
+          <Switch.Control>
+            <Switch.Thumb />
+          </Switch.Control>
+          <Label className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink-soft)]">
+            周期任务
+          </Label>
         </Switch>
         <Button
-          color="default"
-          variant="flat"
+          variant="secondary"
           className="app-btn"
           onPress={loadData}
         >
@@ -360,7 +356,7 @@ const TodosPage = () => {
         />
       ) : (
         <Card className="app-surface app-card rounded-lg">
-          <CardHeader className="flex items-center justify-between gap-3">
+          <Card.Header className="flex items-center justify-between gap-3">
             <div>
               <p className="text-base font-semibold text-[var(--ink-strong)]">
                 近 7 天任务
@@ -369,8 +365,8 @@ const TodosPage = () => {
                 共 {currentTodos.length} 条
               </p>
             </div>
-          </CardHeader>
-          <CardBody className="app-card-body">
+          </Card.Header>
+          <Card.Content className="app-card-body">
             <div className="max-h-[32vh] overflow-auto pr-1">
               <div className="grid gap-5 lg:grid-cols-2">
                 {currentTodos.map((todo) => {
@@ -388,7 +384,7 @@ const TodosPage = () => {
 
                   return (
                     <Card key={todo.id} className="app-surface app-card rounded-lg">
-                      <CardHeader className="flex items-start justify-between gap-2 px-2 pb-1 pt-2">
+                      <Card.Header className="flex items-start justify-between gap-2 px-2 pb-1 pt-2">
                         <div className="space-y-0.5">
                           <p className="text-[13px] font-semibold text-[var(--ink-strong)]">
                             {todo.item}
@@ -402,7 +398,7 @@ const TodosPage = () => {
                           {extraTagCount > 0 ? (
                             <Chip
                               size="sm"
-                              variant="flat"
+                              variant="secondary"
                               className="app-chip px-2 py-0 text-[10px] leading-tight opacity-70"
                             >
                               +{extraTagCount}
@@ -410,15 +406,15 @@ const TodosPage = () => {
                           ) : null}
                           <Chip
                             color="default"
-                            variant="flat"
+                            variant="secondary"
                             size="sm"
                             className="app-chip px-2 py-0 text-[10px] leading-tight"
                           >
                             {todo.importance}
                           </Chip>
                         </div>
-                      </CardHeader>
-                      <CardBody className="app-card-body space-y-2 px-2 pb-2 pt-1">
+                      </Card.Header>
+                      <Card.Content className="app-card-body space-y-2 px-2 pb-2 pt-1">
                         <div className="space-y-2">
                           {showList ? (
                             <ul className="app-text-list">
@@ -452,8 +448,7 @@ const TodosPage = () => {
                         <div className="app-card-footer flex flex-wrap items-center gap-2">
                           <Button
                             size="sm"
-                            color="default"
-                            variant="flat"
+                            variant="primary"
                             className="app-btn app-btn-primary app-btn-compact"
                             onPress={() => openEdit(todo)}
                           >
@@ -461,27 +456,26 @@ const TodosPage = () => {
                           </Button>
                           <Button
                             size="sm"
-                            color="default"
-                            variant="flat"
+                            variant="ghost"
                             className="app-btn app-btn-ghost app-btn-compact"
                             onPress={() => handleDelete(todo.id)}
-                            isLoading={saving}
+                            isPending={saving}
                           >
                             删除
                           </Button>
                         </div>
-                      </CardBody>
+                      </Card.Content>
                     </Card>
                   )
                 })}
               </div>
             </div>
-          </CardBody>
+          </Card.Content>
         </Card>
       )}
 
       <Card className="app-surface app-card rounded-lg">
-        <CardHeader className="flex items-center justify-between gap-3">
+        <Card.Header className="flex items-center justify-between gap-3">
           <div>
             <p className="text-base font-semibold text-[var(--ink-strong)]">
               历史任务
@@ -491,16 +485,15 @@ const TodosPage = () => {
             </p>
           </div>
           <Button
-            color="default"
-            variant="flat"
+            variant="secondary"
             size="sm"
             className="app-btn"
             onPress={() => setHistoryOpen((prev) => !prev)}
           >
             {historyOpen ? '收起' : '展开'}
           </Button>
-        </CardHeader>
-        <CardBody className="app-card-body space-y-3">
+        </Card.Header>
+        <Card.Content className="app-card-body space-y-3">
           {!historyOpen ? (
             <p className="text-sm text-[var(--ink-soft)]">{historySummary}</p>
           ) : historyTodos.length === 0 ? (
@@ -523,30 +516,37 @@ const TodosPage = () => {
               ))}
             </div>
           )}
-        </CardBody>
+        </Card.Content>
       </Card>
 
-      <Divider className="my-4" />
+      <Separator className="my-4" />
 
       <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
         <Card className="app-surface app-card rounded-lg">
-          <CardHeader>
+          <Card.Header>
             <p className="text-lg font-semibold text-[var(--ink-strong)]">
               标签管理
             </p>
-          </CardHeader>
-          <CardBody className="app-card-body space-y-4">
+          </Card.Header>
+          <Card.Content className="app-card-body space-y-4">
             <div className="flex flex-wrap gap-2">
               {tags.length ? (
                 tags.map((tag) => (
                   <Chip
                     key={tag.id}
                     size="sm"
-                    variant="flat"
-                    className="app-chip cursor-pointer px-3 py-1 text-xs"
-                    onClose={() => handleDeleteTag(tag.id)}
+                    variant="secondary"
+                    className="app-chip flex items-center gap-2 px-3 py-1 text-xs"
                   >
-                    {tag.name}
+                    <span>{tag.name}</span>
+                    <button
+                      type="button"
+                      className="text-[10px] text-[var(--ink-soft)] transition hover:text-[var(--ink-strong)]"
+                      onClick={() => handleDeleteTag(tag.id)}
+                      aria-label={`删除标签 ${tag.name}`}
+                    >
+                      ×
+                    </button>
                   </Chip>
                 ))
               ) : (
@@ -554,146 +554,153 @@ const TodosPage = () => {
               )}
             </div>
             <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_180px_auto] md:items-end">
-              <Input
-                label="新标签"
+              <TextField
                 value={tagDraft.name}
-                onValueChange={(value) =>
+                onChange={(value) =>
                   setTagDraft((prev) => ({ ...prev, name: value }))
                 }
-                classNames={{
-                  inputWrapper:
-                    'min-h-[44px] rounded-md bg-[var(--surface-muted)] border border-[var(--surface-border)]',
-                  input:
-                    'text-sm text-[var(--ink-strong)] placeholder:text-[var(--ink-soft)]',
-                  label: 'text-xs font-medium text-[var(--ink-strong)]',
-                }}
-              />
-              <Input
-                label="颜色"
-                placeholder="#E07A5F"
+                className="space-y-1"
+              >
+                <Label className="app-label">新标签</Label>
+                <Input
+                  placeholder="标签名称"
+                  className="app-input"
+                />
+              </TextField>
+              <TextField
                 value={tagDraft.color}
-                onValueChange={(value) =>
+                onChange={(value) =>
                   setTagDraft((prev) => ({ ...prev, color: value }))
                 }
-                classNames={{
-                  inputWrapper:
-                    'min-h-[44px] rounded-md bg-[var(--surface-muted)] border border-[var(--surface-border)]',
-                  input:
-                    'text-sm text-[var(--ink-strong)] placeholder:text-[var(--ink-soft)]',
-                  label: 'text-xs font-medium text-[var(--ink-strong)]',
-                }}
-              />
+                className="space-y-1"
+              >
+                <Label className="app-label">颜色</Label>
+                <Input
+                  placeholder="#E07A5F"
+                  className="app-input"
+                />
+              </TextField>
               <Button
-                color="default"
-                variant="flat"
+                variant="primary"
                 className="app-btn app-btn-primary app-btn-hit w-full md:w-auto"
                 onPress={handleCreateTag}
-                isLoading={tagBusy}
+                isPending={tagBusy}
               >
                 创建标签
               </Button>
             </div>
-          </CardBody>
+          </Card.Content>
         </Card>
       </div>
 
-      <Modal isOpen={modalOpen} onOpenChange={setModalOpen} size="lg">
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="text-lg font-semibold">
-                {formState.id ? '编辑任务' : '新建任务'}
-              </ModalHeader>
-              <ModalBody className="space-y-3">
-                <Input
-                  label="任务名称"
-                  value={formState.item}
-                  onValueChange={(value) =>
-                    setFormState((prev) => ({ ...prev, item: value }))
-                  }
-                />
-                <Textarea
-                  label="描述"
-                  value={formState.description}
-                  onValueChange={(value) =>
-                    setFormState((prev) => ({ ...prev, description: value }))
-                  }
-                />
-                <div className="grid gap-3 md:grid-cols-2">
-                  <Input
-                    label="开始时间"
-                    type="datetime-local"
-                    value={formState.start_time}
-                    onValueChange={(value) =>
-                      setFormState((prev) => ({ ...prev, start_time: value }))
+      <Modal>
+        <Modal.Backdrop isOpen={modalOpen} onOpenChange={setModalOpen} />
+        <Modal.Container size="lg">
+          <Modal.Dialog>
+            {({ close }) => (
+              <>
+                <Modal.Header className="text-lg font-semibold">
+                  {formState.id ? '编辑任务' : '新建任务'}
+                </Modal.Header>
+                <Modal.Body className="space-y-3">
+                  <TextField
+                    value={formState.item}
+                    onChange={(value) =>
+                      setFormState((prev) => ({ ...prev, item: value }))
                     }
-                  />
-                  <Input
-                    label="结束时间"
-                    type="datetime-local"
-                    value={formState.end_time}
-                    onValueChange={(value) =>
-                      setFormState((prev) => ({ ...prev, end_time: value }))
+                    className="space-y-1"
+                  >
+                    <Label className="app-label">任务名称</Label>
+                    <Input className="app-input" />
+                  </TextField>
+                  <TextField
+                    value={formState.description}
+                    onChange={(value) =>
+                      setFormState((prev) => ({ ...prev, description: value }))
                     }
-                  />
-                  <Input
-                    label="提醒时间"
-                    type="datetime-local"
-                    value={formState.alarm_time}
-                    onValueChange={(value) =>
-                      setFormState((prev) => ({ ...prev, alarm_time: value }))
-                    }
-                  />
-                  <div>
-                    <label className="text-xs text-[var(--ink-soft)]">
-                      重要程度
-                    </label>
-                    <select
-                      className="mt-2 w-full rounded-md border border-[var(--surface-border)] bg-[var(--surface-muted)] px-3 py-2 text-sm"
-                      value={formState.importance}
-                      onChange={(event) =>
-                        setFormState((prev) => ({
-                          ...prev,
-                          importance: event.target.value,
-                        }))
+                    className="space-y-1"
+                  >
+                    <Label className="app-label">描述</Label>
+                    <TextArea className="app-input app-textarea" />
+                  </TextField>
+                  <div className="grid gap-3 md:grid-cols-2">
+                    <TextField
+                      value={formState.start_time}
+                      onChange={(value) =>
+                        setFormState((prev) => ({ ...prev, start_time: value }))
                       }
+                      className="space-y-1"
                     >
-                      {importanceOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
+                      <Label className="app-label">开始时间</Label>
+                      <Input type="datetime-local" className="app-input" />
+                    </TextField>
+                    <TextField
+                      value={formState.end_time}
+                      onChange={(value) =>
+                        setFormState((prev) => ({ ...prev, end_time: value }))
+                      }
+                      className="space-y-1"
+                    >
+                      <Label className="app-label">结束时间</Label>
+                      <Input type="datetime-local" className="app-input" />
+                    </TextField>
+                    <TextField
+                      value={formState.alarm_time}
+                      onChange={(value) =>
+                        setFormState((prev) => ({ ...prev, alarm_time: value }))
+                      }
+                      className="space-y-1"
+                    >
+                      <Label className="app-label">提醒时间</Label>
+                      <Input type="datetime-local" className="app-input" />
+                    </TextField>
+                    <div className="space-y-1">
+                      <label className="app-label">重要程度</label>
+                      <select
+                        className="app-input"
+                        value={formState.importance}
+                        onChange={(event) =>
+                          setFormState((prev) => ({
+                            ...prev,
+                            importance: event.target.value,
+                          }))
+                        }
+                      >
+                        {importanceOptions.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
-                </div>
                 {formError ? (
                   <div className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
                     {formError}
                   </div>
                 ) : null}
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  color="default"
-                  variant="flat"
-                  className="app-btn"
-                  onPress={onClose}
-                >
-                  取消
-                </Button>
-                <Button
-                  color="default"
-                  variant="flat"
-                  className="app-btn app-btn-primary"
-                  onPress={handleSave}
-                  isLoading={saving}
-                >
-                  保存
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    variant="secondary"
+                    className="app-btn"
+                    onPress={close}
+                  >
+                    取消
+                  </Button>
+                  <Button
+                    variant="primary"
+                    className="app-btn app-btn-primary"
+                    onPress={handleSave}
+                    isPending={saving}
+                  >
+                    保存
+                  </Button>
+                </Modal.Footer>
+              </>
+            )}
+          </Modal.Dialog>
+        </Modal.Container>
       </Modal>
     </div>
   )

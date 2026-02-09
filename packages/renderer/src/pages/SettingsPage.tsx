@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardHeader } from '@heroui/react'
+import { Button, Card } from '@heroui/react'
 import PageHeader from '../components/PageHeader'
 import type { User } from '../api/generated/types.gen'
 import { api } from '../api/service'
@@ -22,12 +22,12 @@ const SettingsPage = ({ user, onLogout }: SettingsPageProps) => {
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card className="app-surface app-card rounded-lg">
-          <CardHeader>
+          <Card.Header>
             <p className="text-lg font-semibold text-[var(--ink-strong)]">
               账户信息
             </p>
-          </CardHeader>
-          <CardBody className="app-card-body space-y-2 text-sm text-[var(--ink-soft)]">
+          </Card.Header>
+          <Card.Content className="app-card-body space-y-2 text-sm text-[var(--ink-soft)]">
             <p>
               <span className="font-semibold text-[var(--ink-strong)]">邮箱：</span>
               {user.email}
@@ -40,25 +40,25 @@ const SettingsPage = ({ user, onLogout }: SettingsPageProps) => {
               <span className="font-semibold text-[var(--ink-strong)]">状态：</span>
               {user.is_verified ? '已验证' : '未验证'}
             </p>
-            <Button color="default" variant="flat" className="app-btn app-btn-ghost" onPress={handleLogout}>
+            <Button variant="ghost" className="app-btn app-btn-ghost" onPress={handleLogout}>
               退出登录
             </Button>
-          </CardBody>
+          </Card.Content>
         </Card>
 
         <Card className="app-surface app-card rounded-lg">
-          <CardHeader>
+          <Card.Header>
             <p className="text-lg font-semibold text-[var(--ink-strong)]">
               连接配置
             </p>
-          </CardHeader>
-          <CardBody className="app-card-body space-y-2 text-sm text-[var(--ink-soft)]">
+          </Card.Header>
+          <Card.Content className="app-card-body space-y-2 text-sm text-[var(--ink-soft)]">
             <p>
               <span className="font-semibold text-[var(--ink-strong)]">API：</span>
               {BASE_URL}
             </p>
             <p>如需切换环境，请修改 VITE_API_BASE_URL 并重启应用。</p>
-          </CardBody>
+          </Card.Content>
         </Card>
       </div>
     </div>

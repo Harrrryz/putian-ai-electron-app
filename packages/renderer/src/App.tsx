@@ -1,5 +1,5 @@
-import { Button, Divider, User } from '@heroui/react'
-import type { SVGProps } from 'react'
+import { Button, Separator } from '@heroui/react'
+import type { ReactElement, SVGProps } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { api } from './api/service'
 import type { User as UserProfile } from './api/generated/types.gen'
@@ -25,7 +25,7 @@ type NavItem = {
   key: PageKey
   label: string
   description: string
-  Icon: (props: SVGProps<SVGSVGElement>) => JSX.Element
+  Icon: (props: SVGProps<SVGSVGElement>) => ReactElement
 }
 
 const NAV_ITEMS: NavItem[] = [
@@ -89,6 +89,22 @@ const App = () => {
     }
   }, [activePage, user])
 
+  const userDisplayName = user?.name || 'Todo User'
+  const userInitials = useMemo(() => {
+    const source = user?.name || user?.email || 'TU'
+    const parts = source
+      .split(' ')
+      .map((part) => part.trim())
+      .filter(Boolean)
+    if (parts.length === 0) {
+      return 'TU'
+    }
+    return parts
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase() ?? '')
+      .join('')
+  }, [user])
+
   if (status === 'loading') {
     return <LoadingScreen />
   }
@@ -113,14 +129,13 @@ const App = () => {
                 <ThemeToggle />
               </div>
             </div>
-            <Divider />
+            <Separator />
             <div className="flex flex-wrap gap-2 lg:flex-col">
               {NAV_ITEMS.map((item) => (
                 <Button
                   key={item.key}
-                  variant="flat"
-                  color="default"
-                  className="app-nav-item justify-start"
+                  variant="tertiary"
+                  className="app-nav-item justify-start w-full p-[20px]"
                   data-active={activePage === item.key}
                   onPress={() => setActivePage(item.key)}
                 >
@@ -151,15 +166,19 @@ const App = () => {
                 </p>
               </div>
               {user ? (
-                <User
-                  name={user.name || 'Todo User'}
-                  description={user.email}
-                  avatarProps={{
-                    radius: 'full',
-                    color: 'default',
-                    name: user.name || 'TU',
-                  }}
-                />
+                <div className="flex items-center gap-3 rounded-md bg-[var(--surface-muted)] px-3 py-2">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--accent-soft)] text-xs font-semibold text-[var(--ink-strong)]">
+                    {userInitials}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-[var(--ink-strong)]">
+                      {userDisplayName}
+                    </p>
+                    <p className="text-xs text-[var(--ink-soft)]">
+                      {user.email}
+                    </p>
+                  </div>
+                </div>
               ) : null}
             </div>
             <div className="app-shell-content">

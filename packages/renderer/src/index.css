@@ -1,7 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
-@plugin '../hero.ts';
-@source '../../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+@import '@heroui/styles';
 @custom-variant dark (&:is(.dark *));
 
 html,
@@ -313,6 +311,34 @@ body::before {
 .app-btn-ghost {
   background: transparent;
   color: var(--ink-soft);
+}
+
+.app-input {
+  min-height: 44px;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--surface-border);
+  background: var(--surface-muted);
+  padding: 0 12px;
+  font-size: 0.875rem;
+  color: var(--ink-strong);
+}
+
+.app-input::placeholder {
+  color: var(--ink-soft);
+}
+
+.app-textarea {
+  min-height: 120px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  resize: vertical;
+}
+
+.app-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ink-strong);
 }
 
 .app-chip {

@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardHeader, Input, Tab, Tabs } from '@heroui/react'
+import { Button, Card, Input, Label, Tabs, TextField } from '@heroui/react'
 import { useState } from 'react'
 import { api } from '../api/service'
 import type { User } from '../api/generated/types.gen'
@@ -87,7 +87,7 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
   return (
     <div className="flex min-h-full items-center justify-center px-4 py-8">
       <Card className="app-surface app-card w-full max-w-xl rounded-lg">
-        <CardHeader className="flex flex-col items-start gap-2">
+        <Card.Header className="flex flex-col items-start gap-2">
           <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-soft)]">
             Todo AI Desktop
           </p>
@@ -97,45 +97,61 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
           <p className="text-sm text-[var(--ink-soft)]">
             模块化 Todo 管理 + AI 助手，专为日程规划而生。
           </p>
-        </CardHeader>
-        <CardBody className="app-card-body space-y-3">
+        </Card.Header>
+        <Card.Content className="app-card-body space-y-3">
           <Tabs
             selectedKey={activeTab}
             onSelectionChange={(key) => setActiveTab(String(key))}
-            variant="underlined"
-            color="default"
+            variant="secondary"
           >
-            <Tab key="login" title="登录">
+            <Tabs.ListContainer>
+              <Tabs.List>
+                <Tabs.Tab id="login">登录</Tabs.Tab>
+                <Tabs.Tab id="register">注册</Tabs.Tab>
+                <Tabs.Indicator />
+              </Tabs.List>
+            </Tabs.ListContainer>
+            <Tabs.Panel id="login">
               <div className="space-y-3">
-                <Input
-                  label="邮箱"
-                  type="email"
+                <TextField
                   value={loginForm.username}
-                  onValueChange={(value) =>
+                  onChange={(value) =>
                     setLoginForm((prev) => ({ ...prev, username: value }))
                   }
-                />
-                <Input
-                  label="密码"
-                  type="password"
+                  className="space-y-1"
+                >
+                  <Label className="app-label">邮箱</Label>
+                  <Input
+                    type="email"
+                    placeholder="name@example.com"
+                    className="app-input"
+                  />
+                </TextField>
+                <TextField
                   value={loginForm.password}
-                  onValueChange={(value) =>
+                  onChange={(value) =>
                     setLoginForm((prev) => ({ ...prev, password: value }))
                   }
-                />
+                  className="space-y-1"
+                >
+                  <Label className="app-label">密码</Label>
+                  <Input
+                    type="password"
+                    placeholder="输入密码"
+                    className="app-input"
+                  />
+                </TextField>
                 <div className="flex flex-wrap items-center gap-2">
                   <Button
-                    color="default"
-                    variant="flat"
+                    variant="primary"
                     className="app-btn app-btn-primary"
                     onPress={handleLogin}
-                    isLoading={busy}
+                    isPending={busy}
                   >
                     登录
                   </Button>
                   <Button
-                    color="default"
-                    variant="flat"
+                    variant="secondary"
                     className="app-btn"
                     onPress={handleResendVerification}
                     isDisabled={!loginForm.username || busy}
@@ -144,43 +160,57 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
                   </Button>
                 </div>
               </div>
-            </Tab>
-            <Tab key="register" title="注册">
+            </Tabs.Panel>
+            <Tabs.Panel id="register">
               <div className="space-y-3">
-                <Input
-                  label="邮箱"
-                  type="email"
+                <TextField
                   value={registerForm.email}
-                  onValueChange={(value) =>
+                  onChange={(value) =>
                     setRegisterForm((prev) => ({ ...prev, email: value }))
                   }
-                />
-                <Input
-                  label="姓名"
+                  className="space-y-1"
+                >
+                  <Label className="app-label">邮箱</Label>
+                  <Input
+                    type="email"
+                    placeholder="name@example.com"
+                    className="app-input"
+                  />
+                </TextField>
+                <TextField
                   value={registerForm.name}
-                  onValueChange={(value) =>
+                  onChange={(value) =>
                     setRegisterForm((prev) => ({ ...prev, name: value }))
                   }
-                />
-                <Input
-                  label="密码"
-                  type="password"
+                  className="space-y-1"
+                >
+                  <Label className="app-label">姓名</Label>
+                  <Input placeholder="输入姓名" className="app-input" />
+                </TextField>
+                <TextField
                   value={registerForm.password}
-                  onValueChange={(value) =>
+                  onChange={(value) =>
                     setRegisterForm((prev) => ({ ...prev, password: value }))
                   }
-                />
+                  className="space-y-1"
+                >
+                  <Label className="app-label">密码</Label>
+                  <Input
+                    type="password"
+                    placeholder="设置密码"
+                    className="app-input"
+                  />
+                </TextField>
                 <Button
-                  color="default"
-                  variant="flat"
+                  variant="primary"
                   className="app-btn app-btn-primary"
                   onPress={handleRegister}
-                  isLoading={busy}
+                  isPending={busy}
                 >
                   创建账户
                 </Button>
               </div>
-            </Tab>
+            </Tabs.Panel>
           </Tabs>
           {error ? (
             <div className="rounded-md bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -192,7 +222,7 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
               {notice}
             </div>
           ) : null}
-        </CardBody>
+        </Card.Content>
       </Card>
     </div>
   )

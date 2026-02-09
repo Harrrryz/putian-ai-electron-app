@@ -1,4 +1,4 @@
-import { Card, CardBody, CardHeader, Chip, Spinner } from '@heroui/react'
+import { Card, Chip, Spinner } from '@heroui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { api } from '../api/service'
 import type { TodoModel, UsageStatsResponse } from '../api/generated/types.gen'
@@ -84,7 +84,7 @@ const DashboardPage = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Spinner color="default" />
+        <Spinner />
       </div>
     )
   }
@@ -105,34 +105,34 @@ const DashboardPage = () => {
       />
       <div className="grid gap-4 md:grid-cols-3">
         <Card className="app-surface app-card rounded-lg">
-          <CardHeader className="text-xs uppercase tracking-[0.2em] text-[var(--ink-soft)]">
+          <Card.Header className="text-xs uppercase tracking-[0.2em] text-[var(--ink-soft)]">
             任务总数
-          </CardHeader>
-          <CardBody className="app-card-body text-3xl font-semibold text-[var(--ink-strong)]">
+          </Card.Header>
+          <Card.Content className="app-card-body text-3xl font-semibold text-[var(--ink-strong)]">
             {stats.total}
-          </CardBody>
+          </Card.Content>
         </Card>
         <Card className="app-surface app-card rounded-lg">
-          <CardHeader className="text-xs uppercase tracking-[0.2em] text-[var(--ink-soft)]">
+          <Card.Header className="text-xs uppercase tracking-[0.2em] text-[var(--ink-soft)]">
             未来 7 天
-          </CardHeader>
-          <CardBody className="app-card-body text-3xl font-semibold text-[var(--ink-strong)]">
+          </Card.Header>
+          <Card.Content className="app-card-body text-3xl font-semibold text-[var(--ink-strong)]">
             {stats.upcoming}
-          </CardBody>
+          </Card.Content>
         </Card>
         <Card className="app-surface app-card rounded-lg">
-          <CardHeader className="text-xs uppercase tracking-[0.2em] text-[var(--ink-soft)]">
+          <Card.Header className="text-xs uppercase tracking-[0.2em] text-[var(--ink-soft)]">
             高优先级
-          </CardHeader>
-          <CardBody className="app-card-body text-3xl font-semibold text-[var(--ink-strong)]">
+          </Card.Header>
+          <Card.Content className="app-card-body text-3xl font-semibold text-[var(--ink-strong)]">
             {stats.high}
-          </CardBody>
+          </Card.Content>
         </Card>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
         <Card className="app-surface app-card rounded-lg">
-          <CardHeader className="flex items-center justify-between">
+          <Card.Header className="flex items-center justify-between">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-soft)]">
                 即将开始
@@ -141,8 +141,8 @@ const DashboardPage = () => {
                 下一步安排
               </p>
             </div>
-          </CardHeader>
-          <CardBody className="app-card-body space-y-3">
+          </Card.Header>
+          <Card.Content className="app-card-body space-y-3">
             {upcomingTodos.length ? (
               upcomingTodos.map((todo) => (
                 <div
@@ -155,7 +155,7 @@ const DashboardPage = () => {
                     </p>
                     <Chip
                       size="sm"
-                      variant="flat"
+                      variant="secondary"
                       color="default"
                       className="app-chip"
                     >
@@ -172,19 +172,19 @@ const DashboardPage = () => {
                 暂无即将开始的任务。
               </p>
             )}
-          </CardBody>
+          </Card.Content>
         </Card>
 
         <Card className="app-surface app-card rounded-lg">
-          <CardHeader className="flex flex-col items-start gap-1">
+          <Card.Header className="flex flex-col items-start gap-1">
             <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-soft)]">
               AI 用量
             </p>
             <p className="text-lg font-semibold text-[var(--ink-strong)]">
               本月使用情况
             </p>
-          </CardHeader>
-          <CardBody className="app-card-body space-y-3 text-sm text-[var(--ink-soft)]">
+          </Card.Header>
+          <Card.Content className="app-card-body space-y-3 text-sm text-[var(--ink-soft)]">
             {usage ? (
               <>
                 <div className="flex items-center justify-between">
@@ -209,7 +209,7 @@ const DashboardPage = () => {
             ) : (
               <p>暂无用量信息。</p>
             )}
-          </CardBody>
+          </Card.Content>
         </Card>
       </div>
     </div>

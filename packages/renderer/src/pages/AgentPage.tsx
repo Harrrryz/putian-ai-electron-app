@@ -1,11 +1,11 @@
 import {
   Button,
   Card,
-  CardBody,
-  CardHeader,
-  Divider,
   Input,
+  Label,
+  Separator,
   Spinner,
+  TextField,
 } from '@heroui/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { api } from '../api/service'
@@ -342,7 +342,7 @@ const AgentPage = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Spinner color="default" />
+        <Spinner />
       </div>
     )
   }
@@ -377,8 +377,7 @@ const AgentPage = () => {
               </select>
             </div>
             <Button
-              color="default"
-              variant="flat"
+              variant="secondary"
               className="app-btn"
               onPress={handleNewSession}
             >
@@ -396,7 +395,7 @@ const AgentPage = () => {
 
       <div className="space-y-3">
         <Card className="app-surface app-card rounded-lg">
-          <CardBody className="flex-1 min-h-0 p-0">
+          <Card.Content className="flex-1 min-h-0 p-0">
             <div
               ref={messageContainerRef}
               className="h-full overflow-auto space-y-3 px-4 py-3"
@@ -456,25 +455,29 @@ const AgentPage = () => {
                 />
               )}
             </div>
-          </CardBody>
+          </Card.Content>
         </Card>
 
         <Card className="app-surface app-card rounded-lg">
-          <CardBody className="app-card-body space-y-3">
-            <Input
-              label="发送消息"
-              placeholder="输入你的需求..."
+          <Card.Content className="app-card-body space-y-3">
+            <TextField
               value={draft}
-              onValueChange={setDraft}
-              isDisabled={!activeSession}
-            />
+              onChange={setDraft}
+              className="space-y-1"
+            >
+              <Label className="app-label">发送消息</Label>
+              <Input
+                placeholder="输入你的需求..."
+                className="app-input"
+                disabled={!activeSession}
+              />
+            </TextField>
             <div className="flex items-center gap-2">
               <Button
-                color="default"
-                variant="flat"
+                variant="primary"
                 className="app-btn app-btn-primary"
                 onPress={handleSend}
-                isLoading={sending}
+                isPending={sending}
                 isDisabled={!draft.trim() || !activeSession}
               >
                 发送
@@ -485,18 +488,18 @@ const AgentPage = () => {
                 </p>
               ) : null}
             </div>
-          </CardBody>
+          </Card.Content>
         </Card>
       </div>
 
-      <Divider />
+      <Separator />
 
       <Card className="app-surface app-card rounded-lg">
-        <CardHeader>
+        <Card.Header>
           <p className="text-sm text-[var(--ink-soft)]">
             小提示：AI 助手默认使用 TodoOrchestratorAgent，可根据需求切换不同 agent。
           </p>
-        </CardHeader>
+        </Card.Header>
       </Card>
     </div>
   )

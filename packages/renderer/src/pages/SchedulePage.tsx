@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardHeader, Input, Spinner } from '@heroui/react'
+import { Button, Card, Input, Label, Spinner, TextField } from '@heroui/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { api } from '../api/service'
 import type { TodoModel } from '../api/generated/types.gen'
@@ -79,8 +79,7 @@ const SchedulePage = () => {
         description="按日期浏览你的任务安排。"
         actions={
           <Button
-            color="default"
-            variant="flat"
+            variant="secondary"
             className="app-btn"
             onPress={loadData}
           >
@@ -90,23 +89,19 @@ const SchedulePage = () => {
       />
 
       <div className="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
-        <Input
-          label="开始日期"
-          type="date"
-          value={rangeStart}
-          onValueChange={setRangeStart}
-        />
-        <Input
-          label="结束日期"
-          type="date"
-          value={rangeEnd}
-          onValueChange={setRangeEnd}
-        />
+        <TextField value={rangeStart} onChange={setRangeStart} className="space-y-1">
+          <Label className="app-label">开始日期</Label>
+          <Input type="date" className="app-input" />
+        </TextField>
+        <TextField value={rangeEnd} onChange={setRangeEnd} className="space-y-1">
+          <Label className="app-label">结束日期</Label>
+          <Input type="date" className="app-input" />
+        </TextField>
       </div>
 
       {loading ? (
         <div className="flex items-center justify-center py-16">
-          <Spinner color="default" />
+          <Spinner />
         </div>
       ) : error ? (
         <div className="rounded-md bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -122,12 +117,12 @@ const SchedulePage = () => {
         <div className="space-y-4">
           {sortedGroups.map(([day, items]) => (
             <Card key={day} className="app-surface app-card rounded-lg">
-              <CardHeader>
+              <Card.Header>
                 <p className="text-lg font-semibold text-[var(--ink-strong)]">
                   {day}
                 </p>
-              </CardHeader>
-              <CardBody className="app-card-body space-y-3">
+              </Card.Header>
+              <Card.Content className="app-card-body space-y-3">
                 {items.map((todo) => (
                   <div
                     key={todo.id}
@@ -142,7 +137,7 @@ const SchedulePage = () => {
                     </p>
                   </div>
                 ))}
-              </CardBody>
+              </Card.Content>
             </Card>
           ))}
         </div>

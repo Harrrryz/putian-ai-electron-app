@@ -26,7 +26,7 @@ const EmptyState = ({
       <p className="mt-1 text-sm text-[var(--ink-soft)]">{description}</p>
     </div>
     {actionLabel && onAction ? (
-      <Button color="default" variant="flat" className="app-btn app-btn-primary" onPress={onAction}>
+      <Button variant="primary" className="app-btn app-btn-primary" onPress={onAction}>
         {actionLabel}
       </Button>
     ) : null}
