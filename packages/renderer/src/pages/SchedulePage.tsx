@@ -1,30 +1,44 @@
-import { Button, Card, Input, Label, Spinner, TextField } from '@heroui/react'
+import dayGridPlugin from '@fullcalendar/react/daygrid'
+import FullCalendar, {
+  type DatesSetData,
+  type EventInput,
+} from '@fullcalendar/react'
+import interactionPlugin from '@fullcalendar/react/interaction'
+import listPlugin from '@fullcalendar/react/list'
+import zhCnLocale from '@fullcalendar/react/locales/zh-cn'
+import timeGridPlugin from '@fullcalendar/react/timegrid'
+import themePlugin from '@fullcalendar/react/themes/classic'
+import { Button, Spinner } from '@heroui/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { api } from '../api/service'
 import type { TodoModel } from '../api/generated/types.gen'
-import EmptyState from '../components/EmptyState'
 import PageHeader from '../components/PageHeader'
-import { CalendarIcon } from '../components/Icons'
-import { formatDateTime, formatDateOnly } from '../utils/datetime'
+import { formatDateTime } from '../utils/datetime'
 
-const toRangeIso = (dateValue: string, endOfDay = false) => {
-  if (!dateValue) {
-    return undefined
+import '@fullcalendar/react/skeleton.css'
+import '@fullcalendar/react/themes/classic/theme.css'
+import '@fullcalendar/react/themes/classic/palette.css'
+
+type VisibleRange = {
+  start: Date
+  end: Date
+}
+
+const createInitialRange = (): VisibleRange => {
+  const now = new Date()
+  return {
+    start: new Date(now.getFullYear(), now.getMonth(), 1),
+    end: new Date(now.getFullYear(), now.getMonth() + 1, 1),
   }
-  const suffix = endOfDay ? 'T23:59:59' : 'T00:00:00'
-  const date = new Date(`${dateValue}${suffix}`)
-  return Number.isNaN(date.getTime()) ? undefined : date.toISOString()
+}
+
+const formatTooltipTime = (date: Date | null) => {
+  return date ? formatDateTime(date.toISOString()) : '未设置'
 }
 
 const SchedulePage = () => {
-  const today = new Date()
-  const [rangeStart, setRangeStart] = useState(
-    today.toISOString().slice(0, 10),
-  )
-  const [rangeEnd, setRangeEnd] = useState(
-    new Date(today.getTime() + 6 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .slice(0, 10),
+  const [visibleRange, setVisibleRange] = useState<VisibleRange>(
+    createInitialRange,
   )
   const [todos, setTodos] = useState<TodoModel[]>([])
   const [loading, setLoading] = useState(true)
@@ -35,8 +49,8 @@ const SchedulePage = () => {
     setError(null)
 
     const response = await api.listTodos({
-      start_time_from: toRangeIso(rangeStart),
-      end_time_to: toRangeIso(rangeEnd, true),
+      start_time_from: visibleRange.start.toISOString(),
+      end_time_to: new Date(visibleRange.end.getTime() - 1).toISOString(),
       include_series_items: true,
       pageSize: 200,
     })
@@ -49,34 +63,50 @@ const SchedulePage = () => {
 
     setTodos(response.data.items ?? [])
     setLoading(false)
-  }, [rangeEnd, rangeStart])
+  }, [visibleRange.end, visibleRange.start])
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadData()
   }, [loadData])
 
-  const grouped = useMemo(() => {
-    return todos.reduce<Record<string, TodoModel[]>>((acc, todo) => {
-      const key = formatDateOnly(todo.start_time)
-      acc[key] = acc[key] ? [...acc[key], todo] : [todo]
-      return acc
-    }, {})
+  const events = useMemo<EventInput[]>(() => {
+    return todos.map((todo) => ({
+      id: todo.id,
+      title: todo.item,
+      start: todo.start_time,
+      end: todo.end_time,
+      extendedProps: {
+        description: todo.description,
+        importance: todo.importance,
+      },
+    }))
   }, [todos])
 
-  const sortedGroups = useMemo(() => {
-    return Object.entries(grouped).sort((a, b) => {
-      const dateA = new Date(a[1][0]?.start_time ?? '').getTime()
-      const dateB = new Date(b[1][0]?.start_time ?? '').getTime()
-      return dateA - dateB
+  const handleDatesSet = useCallback((payload: DatesSetData) => {
+    const nextStartIso = payload.start.toISOString()
+    const nextEndIso = payload.end.toISOString()
+
+    setVisibleRange((previous) => {
+      if (
+        previous.start.toISOString() === nextStartIso &&
+        previous.end.toISOString() === nextEndIso
+      ) {
+        return previous
+      }
+
+      return {
+        start: new Date(payload.start),
+        end: new Date(payload.end),
+      }
     })
-  }, [grouped])
+  }, [])
 
   return (
     <div className="space-y-4">
       <PageHeader
         title="日程视图"
-        description="按日期浏览你的任务安排。"
+        description="基于 FullCalendar v7 按月/周/日浏览任务安排。"
         actions={
           <Button
             variant="secondary"
@@ -88,60 +118,48 @@ const SchedulePage = () => {
         }
       />
 
-      <div className="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
-        <TextField value={rangeStart} onChange={setRangeStart} className="space-y-1">
-          <Label className="app-label">开始日期</Label>
-          <Input type="date" className="app-input" />
-        </TextField>
-        <TextField value={rangeEnd} onChange={setRangeEnd} className="space-y-1">
-          <Label className="app-label">结束日期</Label>
-          <Input type="date" className="app-input" />
-        </TextField>
-      </div>
-
-      {loading ? (
-        <div className="flex items-center justify-center py-16">
-          <Spinner />
-        </div>
-      ) : error ? (
+      {error ? (
         <div className="rounded-md bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
         </div>
-      ) : sortedGroups.length === 0 ? (
-        <EmptyState
-          title="暂无日程"
-          description="当前日期范围内没有任务。"
-          icon={<CalendarIcon className="h-6 w-6" />}
+      ) : null}
+
+      <div className="app-surface rounded-lg p-2 md:p-3">
+        {loading ? (
+          <div className="flex items-center justify-center py-4">
+            <Spinner />
+          </div>
+        ) : null}
+
+        <FullCalendar
+          locale={zhCnLocale}
+          plugins={[
+            themePlugin,
+            interactionPlugin,
+            dayGridPlugin,
+            timeGridPlugin,
+            listPlugin,
+          ]}
+          initialView="dayGridMonth"
+          headerToolbar={{
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
+          }}
+          todayText="今天"
+          monthText="月"
+          weekText="周"
+          dayText="日"
+          listText="列表"
+          dayMaxEvents
+          events={events}
+          datesSet={handleDatesSet}
+          eventDidMount={({ event, el }) => {
+            el.title = `${event.title}\n${formatTooltipTime(event.start)} - ${formatTooltipTime(event.end)}`
+          }}
+          height="auto"
         />
-      ) : (
-        <div className="space-y-4">
-          {sortedGroups.map(([day, items]) => (
-            <Card key={day} className="app-surface app-card rounded-lg">
-              <Card.Header>
-                <p className="text-lg font-semibold text-[var(--ink-strong)]">
-                  {day}
-                </p>
-              </Card.Header>
-              <Card.Content className="app-card-body space-y-3">
-                {items.map((todo) => (
-                  <div
-                    key={todo.id}
-                    className="rounded-md border border-[var(--surface-border)] bg-[var(--surface-muted)] px-4 py-3"
-                  >
-                    <p className="font-medium text-[var(--ink-strong)]">
-                      {todo.item}
-                    </p>
-                    <p className="text-xs text-[var(--ink-soft)]">
-                      {formatDateTime(todo.start_time)} -{' '}
-                      {formatDateTime(todo.end_time)}
-                    </p>
-                  </div>
-                ))}
-              </Card.Content>
-            </Card>
-          ))}
-        </div>
-      )}
+      </div>
     </div>
   )
 }
